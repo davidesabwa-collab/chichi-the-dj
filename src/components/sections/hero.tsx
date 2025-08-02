@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { PlayCircle } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -8,38 +9,28 @@ export default function Hero() {
       <div className="absolute inset-0 z-0">
         <Image
           src="https://placehold.co/1920x1080"
-          alt="DJ G400 performing"
+          alt="Chichi The DJ performing"
           fill
           className="object-cover"
           priority
-          data-ai-hint="dj music festival"
+          data-ai-hint="dj performing crowd"
         />
-        <div className="absolute inset-0 bg-black/70" />
-         <div 
-          className="absolute bottom-0 left-0 right-0 h-48 bg-repeat-x z-10" 
-          style={{ 
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 L50 0 L100 10 L50 20 Z' fill='rgba(200,50,50,0.5)'/%3E%3C/svg%3E\")",
-            backgroundSize: '50px 20px',
-            opacity: 0.5,
-         }}
-        />
+        <div className="absolute inset-0 bg-background/80" />
       </div>
       <div className="relative z-10 flex flex-col items-center p-4">
-        <h1 className="text-5xl md:text-7xl font-bold uppercase tracking-tight">
-          Mr 400 Miles
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-glow">
+          CHICHI THE DJ
         </h1>
-        <h1 className="text-5xl md:text-7xl font-bold uppercase tracking-tight mt-2">
-          Above The Competition
-        </h1>
-        <p className="mt-6 text-lg md:text-xl max-w-xl text-foreground/70">
-          No ads, no noise, just DJ G400&apos;s best mixes, exclusive tracks, playlists, blogs, events, merch, and more, all in one smooth spot.
+        <p className="mt-4 text-lg md:text-xl max-w-2xl text-foreground/80 font-medium">
+          A good DJ is the key to your event’s success. Professional, experienced, and disciplined to make every event unforgettable.
         </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-xs">
-          <Button size="lg" className="w-full">
-            Play Mixes
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-md">
+          <Button size="lg" className="w-full" asChild>
+           <Link href="#booking">Book Us Today</Link>
           </Button>
-          <Button size="lg" variant="outline" className="w-full">
-           Create Account
+          <Button size="lg" variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground">
+            <PlayCircle className="mr-2 h-5 w-5"/>
+            Watch Us Work
           </Button>
         </div>
       </div>

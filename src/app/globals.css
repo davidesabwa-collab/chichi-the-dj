@@ -8,58 +8,53 @@ html {
 
 @layer base {
   :root {
-    --background: 180 4% 6%;
+    --background: 260 20% 5%; /* #08070A */
     --foreground: 0 0% 98%;
-    --card: 180 4% 9%;
+    --card: 260 20% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 180 4% 6%;
+    --popover: 260 20% 5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 180 4% 6%;
-    --secondary: 180 4% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 180 4% 12%;
+    --primary: 311 86% 60%; /* #F043D5 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 185 96% 66%; /* #4FF0FF */
+    --secondary-foreground: 260 20% 5%;
+    --muted: 260 20% 10%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 98%;
-    --accent-foreground: 180 4% 6%;
+    --accent: 311 86% 60%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 180 4% 15%;
-    --input: 180 4% 12%;
-    --ring: 0 0% 98%;
-    --chart-1: 0 0% 98%;
-    --chart-2: 180 4% 12%;
-    --chart-3: 180 4% 12%;
+    --border: 260 20% 12%;
+    --input: 260 20% 10%;
+    --ring: 311 86% 60%;
+    --chart-1: 311 86% 60%;
+    --chart-2: 185 96% 66%;
+    --chart-3: 260 20% 15%;
     --chart-4: 0 0% 98%;
-    --chart-5: 180 4% 12%;
+    --chart-5: 260 20% 20%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 180 4% 6%;
+    --background: 260 20% 5%; /* #08070A */
     --foreground: 0 0% 98%;
-    --card: 180 4% 9%;
+    --card: 260 20% 7%;
     --card-foreground: 0 0% 98%;
-    --popover: 180 4% 6%;
+    --popover: 260 20% 5%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 180 4% 6%;
-    --secondary: 180 4% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 180 4% 12%;
+    --primary: 311 86% 60%; /* #F043D5 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 185 96% 66%; /* #4FF0FF */
+    --secondary-foreground: 260 20% 5%;
+    --muted: 260 20% 10%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 98%;
-    --accent-foreground: 180 4% 6%;
+    --accent: 311 86% 60%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 180 4% 15%;
-    --input: 180 4% 12%;
-    --ring: 0 0% 98%;
-    --chart-1: 0 0% 98%;
-    --chart-2: 180 4% 12%;
-    --chart-3: 180 4% 12%;
-    --chart-4: 0 0% 98%;
-    --chart-5: 180 4% 12%;
+    --border: 260 20% 12%;
+    --input: 260 20% 10%;
+    --ring: 311 86% 60%;
   }
 }
 
@@ -70,4 +65,8 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.text-glow {
+  text-shadow: 0 0 8px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.5);
 }
