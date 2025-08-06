@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase/firebase';
 import Link from 'next/link';
-import { Icons } from '@/components/icons';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +46,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
            <Link href="/" className="inline-block">
-             <Icons.logo className="h-20 w-20 mx-auto" width={80} height={80}/>
+             <Image 
+               src="/chichithedjlogo.png" 
+               alt="Chichi The DJ Logo"
+               width={80} 
+               height={80}
+               className="mx-auto"
+             />
           </Link>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-white uppercase">
             Admin Login
