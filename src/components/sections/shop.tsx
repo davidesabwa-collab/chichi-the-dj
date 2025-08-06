@@ -1,53 +1,13 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { getProducts } from '@/lib/firebase/firestore';
+import { Product } from '@/types/product';
 
-const products = [
-  {
-    name: 'T-shirt',
-    price: '$25.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 't-shirt merchandise'
-  },
-  {
-    name: 'Hoodie',
-    price: '$45.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 'hoodie merchandise'
-  },
-  {
-    name: 'Ladies Tank Top',
-    price: '$25.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 'tank top merchandise'
-  },
-  {
-    name: 'Ladies Jump Suit',
-    price: '$100.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 'jumpsuit merchandise'
-  },
-  {
-    name: 'Men Jump Suit',
-    price: '$100.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 'men jumpsuit'
-  },
-  {
-    name: 'Baseball Hat',
-    price: '$50.00',
-    imageUrl: 'https://placehold.co/400x500',
-    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
-    aiHint: 'baseball hat'
-  },
-];
+export default async function Shop() {
+  const products: Product[] = await getProducts();
 
-export default function Shop() {
   return (
     <section id="shop" className="py-16 sm:py-24 bg-black">
       <div className="container mx-auto px-4">
@@ -62,7 +22,7 @@ export default function Shop() {
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {products.map((product) => (
-            <Link href="#" key={product.name} className="group">
+            <Link href="#" key={product.id} className="group">
               <figure className="w-full aspect-[4/5] relative overflow-hidden rounded-lg mb-4 figure-card transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20">
                 <Image
                   src={product.imageUrl}

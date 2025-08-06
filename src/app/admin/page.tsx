@@ -9,11 +9,12 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct } from '@/lib/firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
+import { Product } from '@/types/product';
 import { Separator } from '@/components/ui/separator';
 
 export default function AdminPage() {
@@ -27,6 +28,9 @@ export default function AdminPage() {
 
   const [events, setEvents] = useState<Event[]>([]);
   const [newEvent, setNewEvent] = useState({ title: '', posterUrl: '', aiHint: '', date: '', location: '', venue: '' });
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -34,6 +38,7 @@ export default function AdminPage() {
         setUser(currentUser);
         fetchMixes();
         fetchEvents();
+        fetchProducts();
       } else {
         router.push('/login');
       }
@@ -51,6 +56,11 @@ export default function AdminPage() {
   const fetchEvents = async () => {
     const eventsData = await getEvents();
     setEvents(eventsData);
+  };
+
+  const fetchProducts = async () => {
+    const productsData = await getProducts();
+    setProducts(productsData);
   };
 
   const handleSignOut = async () => {
@@ -158,6 +168,49 @@ export default function AdminPage() {
     }
   }
 
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProduct.name || !newProduct.price || !newProduct.imageUrl || !newProduct.aiHint) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Fields',
+            description: 'Please fill out all required fields to add a new product.',
+        });
+        return;
+    }
+    try {
+        await addProduct(newProduct);
+        toast({
+            title: 'Product Added',
+            description: 'The new product has been successfully added.',
+        });
+        setNewProduct({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
+        fetchProducts();
+    } catch (error: any) {
+         toast({
+            variant: 'destructive',
+            title: 'Failed to Add Product',
+            description: error.message,
+        });
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    try {
+        await deleteProduct(id);
+        toast({
+            title: 'Product Deleted',
+            description: 'The product has been successfully deleted.',
+        });
+        fetchProducts();
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Failed to Delete Product',
+            description: error.message,
+        });
+    }
+  }
 
   if (isLoading) {
     return (
@@ -243,6 +296,10 @@ export default function AdminPage() {
                             <Label htmlFor="event-posterUrl">Poster URL</Label>
                             <Input id="event-posterUrl" value={newEvent.posterUrl} onChange={(e) => setNewEvent({...newEvent, posterUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
                         </div>
+                         <div>
+                            <Label htmlFor="event-ai-hint">AI Hint for Poster</Label>
+                            <Input id="event-ai-hint" value={newEvent.aiHint} onChange={(e) => setNewEvent({...newEvent, aiHint: e.target.value})} placeholder="e.g., summer party" className="bg-gray-800 border-gray-700" />
+                        </div>
                         <div>
                             <Label htmlFor="event-date">Date</Label>
                             <Input id="event-date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} placeholder="e.g., Happening in 2 weeks" className="bg-gray-800 border-gray-700" />
@@ -271,6 +328,57 @@ export default function AdminPage() {
                             </div>
                         )) : (
                             <p className="text-gray-500">No events found. Add one to get started.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <Separator className="bg-gray-700"/>
+
+          {/* Manage Shop */}
+          <div id="manage-shop">
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Shop</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 className="text-xl font-bold mb-4">Add a New Product</h3>
+                    <form onSubmit={handleAddProduct} className="space-y-4">
+                        <div>
+                            <Label htmlFor="product-name">Product Name</Label>
+                            <Input id="product-name" value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} placeholder="e.g., T-shirt" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="product-price">Price</Label>
+                            <Input id="product-price" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} placeholder="e.g., $25.00" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="product-imageUrl">Image URL</Label>
+                            <Input id="product-imageUrl" value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="product-hoverImageUrl">Hover Image URL (Optional)</Label>
+                            <Input id="product-hoverImageUrl" value={newProduct.hoverImageUrl} onChange={(e) => setNewProduct({...newProduct, hoverImageUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="product-aiHint">AI Hint for Image</Label>
+                            <Input id="product-aiHint" value={newProduct.aiHint} onChange={(e) => setNewProduct({...newProduct, aiHint: e.target.value})} placeholder="e.g., t-shirt merchandise" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <Button type="submit" className="w-full">Add Product</Button>
+                    </form>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-4">Existing Products</h3>
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
+                        {products.length > 0 ? products.map(product => (
+                            <div key={product.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
+                                <div>
+                                    <p className="font-semibold">{product.name}</p>
+                                    <p className="text-sm text-gray-400">{product.price}</p>
+                                </div>
+                                <Button variant="destructive" size="sm" onClick={() => product.id && handleDeleteProduct(product.id)}>Delete</Button>
+                            </div>
+                        )) : (
+                            <p className="text-gray-500">No products found. Add one to get started.</p>
                         )}
                     </div>
                 </div>

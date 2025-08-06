@@ -3,6 +3,7 @@ import { db } from './firebase';
 import { collection, addDoc, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
+import { Product } from '@/types/product';
 
 // Mixes Collection
 const mixesCollection = collection(db, 'mixes');
@@ -44,4 +45,25 @@ export const getEvents = async (): Promise<Event[]> => {
 export const deleteEvent = async (id: string): Promise<void> => {
     const eventDoc = doc(db, 'events', id);
     await deleteDoc(eventDoc);
+};
+
+// Products Collection
+const productsCollection = collection(db, 'products');
+
+// Add a new product
+export const addProduct = async (productData: Omit<Product, 'id'>): Promise<string> => {
+    const docRef = await addDoc(productsCollection, productData);
+    return docRef.id;
+};
+
+// Get all products
+export const getProducts = async (): Promise<Product[]> => {
+    const snapshot = await getDocs(productsCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+};
+
+// Delete a product
+export const deleteProduct = async (id: string): Promise<void> => {
+    const productDoc = doc(db, 'products', id);
+    await deleteDoc(productDoc);
 };
