@@ -9,7 +9,10 @@ import {
   SheetContent,
   SheetClose,
   SheetTrigger,
+  SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const navLinks = [
   { name: "About", href: "/#about" },
@@ -51,7 +54,12 @@ export default function Header() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent className="w-full sm:w-[320px] bg-black text-white p-0 border-l border-gray-800">
-                    <div className="p-6 flex flex-col h-full">
+                    <SheetHeader className="p-6">
+                      <SheetTitle>
+                        <VisuallyHidden>Mobile Navigation Menu</VisuallyHidden>
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="p-6 flex flex-col h-full pt-0">
                         <div className="flex flex-col space-y-4 flex-grow">
                            {navLinks.map((link) => 
                               <SheetClose asChild key={link.name}>
@@ -76,5 +84,3 @@ export default function Header() {
     </header>
   );
 }
-
-    
