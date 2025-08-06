@@ -1,10 +1,11 @@
 
 import { db } from './firebase';
-import { collection, addDoc, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, deleteDoc, Timestamp } from 'firebase/firestore';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
 import { Blog } from '@/types/blog';
+import { Booking } from '@/types/booking';
 
 // Mixes Collection
 const mixesCollection = collection(db, 'mixes');
@@ -88,4 +89,32 @@ export const getBlogs = async (): Promise<Blog[]> => {
 export const deleteBlog = async (id: string): Promise<void> => {
     const blogDoc = doc(db, 'blogs', id);
     await deleteDoc(blogDoc);
+};
+
+// Bookings Collection
+const bookingsCollection = collection(db, 'bookings');
+
+// Add a new booking
+export const addBooking = async (bookingData: Omit<Booking, 'id'>): Promise<string> => {
+  const docRef = await addDoc(bookingsCollection, bookingData);
+  return docRef.id;
+};
+
+// Get all bookings
+export const getBookings = async (): Promise<Booking[]> => {
+  const snapshot = await getDocs(bookingsCollection);
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+    // Convert Firestore Timestamp to JavaScript Date object
+    if (data.date && data.date instanceof Timestamp) {
+      data.date = data.date.toDate();
+    }
+    return { id: doc.id, ...data } as Booking;
+  });
+};
+
+// Delete a booking
+export const deleteBooking = async (id: string): Promise<void> => {
+  const bookingDoc = doc(db, 'bookings', id);
+  await deleteDoc(bookingDoc);
 };

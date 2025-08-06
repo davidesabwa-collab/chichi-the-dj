@@ -1,5 +1,6 @@
 'use server';
 
+import { addBooking } from '@/lib/firebase/firestore';
 import { z } from 'zod';
 
 const bookingSchema = z.object({
@@ -23,12 +24,17 @@ export async function submitBooking(data: unknown) {
     };
   }
   
-  // In a real application, you would integrate with an email service (e.g., Resend, SendGrid)
-  // or save the booking to a database (e.g., Firebase Firestore, Supabase).
-  console.log('New Booking Request Received:', validatedFields.data);
-
-  return { 
-    success: true,
-    message: 'Booking request sent successfully!' 
-  };
+  try {
+    await addBooking(validatedFields.data);
+    return { 
+      success: true,
+      message: 'Booking request sent successfully!' 
+    };
+  } catch (error) {
+    console.error('Failed to save booking:', error);
+    return {
+      success: false,
+      message: 'An error occurred while sending your request. Please try again.',
+    }
+  }
 }

@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/popover"
 import { useToast } from "@/hooks/use-toast"
 import { submitBooking } from '@/app/actions';
+import type { Event } from '@/types/event';
 
 
 const bookingFormSchema = z.object({
@@ -57,7 +58,11 @@ type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
 const defaultValues: Partial<BookingFormValues> = {};
 
-export function BookingForm() {
+interface BookingFormProps {
+  events: Event[];
+}
+
+export function BookingForm({ events }: BookingFormProps) {
     const { toast } = useToast()
   
   const form = useForm<BookingFormValues>({
@@ -81,6 +86,8 @@ export function BookingForm() {
         })
     }
   }
+
+  const bookedDates = events.map(event => new Date(event.date));
 
   return (
     <Form {...form}>
@@ -168,7 +175,12 @@ export function BookingForm() {
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
+                      date < new Date(new Date().setHours(0,0,0,0)) || bookedDates.some(
+                        (bookedDate) =>
+                          bookedDate.getFullYear() === date.getFullYear() &&
+                          bookedDate.getMonth() === date.getMonth() &&
+                          bookedDate.getDate() === date.getDate()
+                      )
                     }
                     initialFocus
                   />

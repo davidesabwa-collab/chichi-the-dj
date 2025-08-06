@@ -1,7 +1,10 @@
 import { BookingForm } from "@/components/booking-form";
+import { getEvents } from "@/lib/firebase/firestore";
 import { Mail, Phone, MapPin } from 'lucide-react';
 
-export default function Booking() {
+export default async function Booking() {
+  const events = await getEvents();
+
   return (
     <section id="booking" className="py-16 sm:py-24 bg-gray-900/50">
       <div className="container mx-auto px-4">
@@ -45,7 +48,7 @@ export default function Booking() {
             </div>
           <div className="bg-gray-900 p-8 rounded-lg shadow-lg">
             <h3 className="text-3xl font-bold text-white mb-6">Request a Quote</h3>
-            <BookingForm />
+            <BookingForm events={events}/>
           </div>
         </div>
       </div>

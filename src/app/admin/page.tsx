@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct, addBlog, getBlogs, deleteBlog } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct, addBlog, getBlogs, deleteBlog, getBookings, deleteBooking } from '@/lib/firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,7 +17,10 @@ import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
 import { Blog } from '@/types/blog';
+import { Booking } from '@/types/booking';
 import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { format } from 'date-fns';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -37,6 +40,8 @@ export default function AdminPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [newBlog, setNewBlog] = useState({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' });
 
+  const [bookings, setBookings] = useState<Booking[]>([]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -45,6 +50,7 @@ export default function AdminPage() {
         fetchEvents();
         fetchProducts();
         fetchBlogs();
+        fetchBookings();
       } else {
         router.push('/login');
       }
@@ -72,6 +78,11 @@ export default function AdminPage() {
   const fetchBlogs = async () => {
     const blogsData = await getBlogs();
     setBlogs(blogsData);
+  };
+
+  const fetchBookings = async () => {
+    const bookingsData = await getBookings();
+    setBookings(bookingsData);
   };
 
   const handleSignOut = async () => {
@@ -267,6 +278,23 @@ export default function AdminPage() {
     }
   }
 
+  const handleDeleteBooking = async (id: string) => {
+    try {
+        await deleteBooking(id);
+        toast({
+            title: 'Booking Deleted',
+            description: 'The booking request has been successfully deleted.',
+        });
+        fetchBookings();
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Failed to Delete Booking',
+            description: error.message,
+        });
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -290,6 +318,32 @@ export default function AdminPage() {
 
         <div className="bg-gray-900/50 p-8 rounded-lg space-y-12">
           
+          {/* Manage Bookings */}
+          <div id="manage-bookings">
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Bookings</h2>
+            <div className="space-y-4">
+              {bookings.length > 0 ? bookings.map(booking => (
+                <Card key={booking.id} className="bg-gray-800 border-gray-700">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xl">{booking.eventType}</CardTitle>
+                    <Button variant="destructive" size="sm" onClick={() => booking.id && handleDeleteBooking(booking.id)}>Delete</Button>
+                  </CardHeader>
+                  <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                    <p><strong className="text-gray-400">Name:</strong> {booking.name}</p>
+                    <p><strong className="text-gray-400">Email:</strong> {booking.email}</p>
+                    <p><strong className="text-gray-400">Date:</strong> {format(new Date(booking.date), "PPP")}</p>
+                    <p><strong className="text-gray-400">Location:</strong> {booking.location}</p>
+                    {booking.budget && <p><strong className="text-gray-400">Budget:</strong> {booking.budget}</p>}
+                  </CardContent>
+                </Card>
+              )) : (
+                 <p className="text-gray-500">No booking requests yet.</p>
+              )}
+            </div>
+          </div>
+
+          <Separator className="bg-gray-700"/>
+
           {/* Manage Mixes */}
           <div id="manage-mixes">
             <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Mixes</h2>
@@ -358,7 +412,7 @@ export default function AdminPage() {
                         </div>
                         <div>
                             <Label htmlFor="event-date">Date</Label>
-                            <Input id="event-date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} placeholder="e.g., Happening in 2 weeks" className="bg-gray-800 border-gray-700" />
+                            <Input id="event-date" type="date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} placeholder="e.g., Happening in 2 weeks" className="bg-gray-800 border-gray-700" />
                         </div>
                         <div>
                             <Label htmlFor="event-location">Location</Label>
