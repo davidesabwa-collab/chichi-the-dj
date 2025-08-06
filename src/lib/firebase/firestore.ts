@@ -4,6 +4,7 @@ import { collection, addDoc, getDocs, doc, deleteDoc } from 'firebase/firestore'
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
+import { Blog } from '@/types/blog';
 
 // Mixes Collection
 const mixesCollection = collection(db, 'mixes');
@@ -66,4 +67,25 @@ export const getProducts = async (): Promise<Product[]> => {
 export const deleteProduct = async (id: string): Promise<void> => {
     const productDoc = doc(db, 'products', id);
     await deleteDoc(productDoc);
+};
+
+// Blogs Collection
+const blogsCollection = collection(db, 'blogs');
+
+// Add a new blog
+export const addBlog = async (blogData: Omit<Blog, 'id'>): Promise<string> => {
+    const docRef = await addDoc(blogsCollection, blogData);
+    return docRef.id;
+};
+
+// Get all blogs
+export const getBlogs = async (): Promise<Blog[]> => {
+    const snapshot = await getDocs(blogsCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Blog));
+};
+
+// Delete a blog
+export const deleteBlog = async (id: string): Promise<void> => {
+    const blogDoc = doc(db, 'blogs', id);
+    await deleteDoc(blogDoc);
 };

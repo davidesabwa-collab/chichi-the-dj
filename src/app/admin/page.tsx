@@ -9,12 +9,14 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct, addBlog, getBlogs, deleteBlog } from '@/lib/firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
+import { Blog } from '@/types/blog';
 import { Separator } from '@/components/ui/separator';
 
 export default function AdminPage() {
@@ -32,6 +34,9 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
 
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [newBlog, setNewBlog] = useState({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' });
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -39,6 +44,7 @@ export default function AdminPage() {
         fetchMixes();
         fetchEvents();
         fetchProducts();
+        fetchBlogs();
       } else {
         router.push('/login');
       }
@@ -61,6 +67,11 @@ export default function AdminPage() {
   const fetchProducts = async () => {
     const productsData = await getProducts();
     setProducts(productsData);
+  };
+
+  const fetchBlogs = async () => {
+    const blogsData = await getBlogs();
+    setBlogs(blogsData);
   };
 
   const handleSignOut = async () => {
@@ -211,6 +222,51 @@ export default function AdminPage() {
         });
     }
   }
+
+  const handleAddBlog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBlog.title || !newBlog.content || !newBlog.thumbnailUrl || !newBlog.date) {
+        toast({
+            variant: 'destructive',
+            title: 'Missing Fields',
+            description: 'Please fill out all required fields to add a new blog post.',
+        });
+        return;
+    }
+    try {
+        await addBlog(newBlog);
+        toast({
+            title: 'Blog Post Added',
+            description: 'The new blog post has been successfully added.',
+        });
+        setNewBlog({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' });
+        fetchBlogs();
+    } catch (error: any) {
+         toast({
+            variant: 'destructive',
+            title: 'Failed to Add Blog Post',
+            description: error.message,
+        });
+    }
+  };
+
+  const handleDeleteBlog = async (id: string) => {
+    try {
+        await deleteBlog(id);
+        toast({
+            title: 'Blog Post Deleted',
+            description: 'The blog post has been successfully deleted.',
+        });
+        fetchBlogs();
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Failed to Delete Blog Post',
+            description: error.message,
+        });
+    }
+  }
+
 
   if (isLoading) {
     return (
@@ -384,6 +440,58 @@ export default function AdminPage() {
                 </div>
             </div>
           </div>
+
+          <Separator className="bg-gray-700"/>
+
+           {/* Manage Blog */}
+          <div id="manage-blog">
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Blog</h2>
+            <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 className="text-xl font-bold mb-4">Add a New Blog Post</h3>
+                    <form onSubmit={handleAddBlog} className="space-y-4">
+                        <div>
+                            <Label htmlFor="blog-title">Title</Label>
+                            <Input id="blog-title" value={newBlog.title} onChange={(e) => setNewBlog({...newBlog, title: e.target.value})} placeholder="e.g., New Album Review" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="blog-content">Content</Label>
+                            <Textarea id="blog-content" value={newBlog.content} onChange={(e) => setNewBlog({...newBlog, content: e.target.value})} placeholder="Write your blog post here..." className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="blog-thumbnailUrl">Thumbnail URL</Label>
+                            <Input id="blog-thumbnailUrl" value={newBlog.thumbnailUrl} onChange={(e) => setNewBlog({...newBlog, thumbnailUrl: e.target.value})} placeholder="https://placehold.co/600x400" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="blog-ai-hint">AI Hint for Thumbnail</Label>
+                            <Input id="blog-ai-hint" value={newBlog.aiHint} onChange={(e) => setNewBlog({...newBlog, aiHint: e.target.value})} placeholder="e.g., music production" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <div>
+                            <Label htmlFor="blog-date">Publication Date</Label>
+                            <Input id="blog-date" value={newBlog.date} onChange={(e) => setNewBlog({...newBlog, date: e.target.value})} placeholder="e.g., June 12, 2024" className="bg-gray-800 border-gray-700" />
+                        </div>
+                        <Button type="submit" className="w-full">Add Blog Post</Button>
+                    </form>
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold mb-4">Existing Posts</h3>
+                    <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
+                        {blogs.length > 0 ? blogs.map(blog => (
+                            <div key={blog.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
+                                <div>
+                                    <p className="font-semibold">{blog.title}</p>
+                                    <p className="text-sm text-gray-400">{blog.date}</p>
+                                </div>
+                                <Button variant="destructive" size="sm" onClick={() => blog.id && handleDeleteBlog(blog.id)}>Delete</Button>
+                            </div>
+                        )) : (
+                            <p className="text-gray-500">No blog posts found. Add one to get started.</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+          </div>
+
 
         </div>
       </main>

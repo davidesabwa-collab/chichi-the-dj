@@ -9,6 +9,7 @@ import Services from '@/components/sections/services';
 import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
 import Events from '@/components/sections/events';
+import Blog from '@/components/sections/blog';
 
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
         <Gallery />
         <Events />
         <Mixes />
+        <Blog />
         <Shop />
         <Booking />
       </main>
