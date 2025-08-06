@@ -28,7 +28,7 @@ const services = [
         icon: Sparkles,
         title: "Graduation Parties",
         description: "Celebrate your achievements with the perfect musical backdrop. We'll create a memorable experience for you and your guests.",
-        imageUrl: "https://placehold.co/600x400",
+        imageUrl: "https://images.unsplash.com/photo-1599943821034-8cb5c7526922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxncmFkdWF0aW9uJTIwcGFydHl8ZW58MHx8fHwxNzU0NDg1NDIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
         aiHint: "graduation party"
     }
 ];
