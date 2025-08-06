@@ -1,34 +1,27 @@
 import Link from 'next/link';
 import { Icons } from './icons';
-import { Twitter, Youtube, Instagram } from 'lucide-react';
+import { Twitter, Youtube, Instagram, Facebook } from 'lucide-react';
 
-const footerLinks = {
-  "Chichi the DJ": [
-    { name: "Home", href: "/" },
-    { name: "About", href: "#about" },
-    { name: "Contact", href: "#booking" },
+const footerSections = {
+  "Company": [
+    { name: "About", href: "/#about" },
+    { name: "Services", href: "/#services" },
+    { name: "Shop", href: "/#shop" },
+    { name: "Gallery", href: "/#gallery" },
   ],
-  "Music": [
-    { name: "Mixes", href: "#mixes" },
-    { name: "Playlists", href: "#" },
-    { name: "Remixes", href: "#" },
+  "Connect": [
+    { name: "Contact Us", href: "/#booking" },
+    { name: "Book Now", href: "/#booking" },
+    { name: "FAQ", href: "#" },
   ],
-  "Shop": [
-    { name: "Clothing", href: "#shop" },
-    { name: "Wallpapers", href: "#" },
-  ],
-  "Other": [
-    { name: "Events", href: "#events" },
-    { name: "Newsletter", href: "#" },
-    { name: "Downloads", href: "#" },
-  ],
-   "Blogs": [
-    { name: "Blogs", href: "#" },
+  "Legal": [
+    { name: "Privacy Policy", href: "#" },
+    { name: "Terms of Service", href: "#" },
   ],
 };
 
-
 const socialLinks = [
+    { name: "Facebook", href: "#", icon: Facebook },
     { name: "Twitter", href: "#", icon: Twitter },
     { name: "YouTube", href: "#", icon: Youtube },
     { name: "Instagram", href: "#", icon: Instagram },
@@ -36,46 +29,58 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-t from-black via-gray-900/80 to-[#1a1a1a] text-gray-400">
+    <footer className="bg-gray-900 text-gray-400">
       <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
-          <div className="col-span-2 md:col-span-1">
-            <Icons.logo className="h-24 w-24 text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <div className="col-span-1 md:col-span-4">
+            <Link href="/" className="inline-block mb-4">
+              <Icons.logo className="h-20 w-20 text-primary" />
+            </Link>
+            <p className="max-w-xs text-sm">
+                A good DJ is the key to your event’s success. Chichi The DJ is a professional, experienced, and disciplined DJ.
+            </p>
           </div>
 
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h5 className="font-bold text-gray-100 mb-4">{title}</h5>
-              <ul className="space-y-3">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    <Link href={link.href} className="hover:text-primary transition-colors text-sm">
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="col-span-1 md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+            {Object.entries(footerSections).map(([title, links]) => (
+                <div key={title}>
+                <h5 className="font-bold text-white mb-4 uppercase tracking-wider">{title}</h5>
+                <ul className="space-y-3">
+                    {links.map((link) => (
+                    <li key={link.name}>
+                        <Link href={link.href} className="hover:text-primary hover:underline transition-colors text-sm">
+                        {link.name}
+                        </Link>
+                    </li>
+                    ))}
+                </ul>
+                </div>
+            ))}
+             <div>
+                <h5 className="font-bold text-white mb-4 uppercase tracking-wider">Follow Us</h5>
+                 <div className="flex items-center gap-4">
+                    {socialLinks.map((social) => (
+                        <Link key={social.name} href={social.href} className="text-gray-400 hover:text-primary transition-colors">
+                            <social.icon className="h-6 w-6" />
+                            <span className="sr-only">{social.name}</span>
+                        </Link>
+                    ))}
+                 </div>
+             </div>
+          </div>
         </div>
 
         <hr className="my-8 border-gray-800" />
 
         <div className="flex flex-col sm:flex-row justify-between items-center text-sm">
-          <p className="text-center sm:text-left">
+          <p className="text-center sm:text-left mb-4 sm:mb-0">
             &copy; {new Date().getFullYear()} Chichi The DJ. All Rights Reserved.
           </p>
-          <div className="flex items-center gap-4 mt-4 sm:mt-0">
-             <span className="hidden sm:inline">Follow Chichi The DJ</span>
-             <div className="flex gap-4">
-                {socialLinks.map((social) => (
-                    <Link key={social.name} href={social.href} className="text-gray-400 hover:text-primary transition-colors">
-                        <social.icon className="h-5 w-5" />
-                        <span className="sr-only">{social.name}</span>
-                    </Link>
-                ))}
-             </div>
-          </div>
+           <p>
+            <Link href="/login" className="hover:text-primary hover:underline transition-colors text-sm">
+                Admin Login
+            </Link>
+           </p>
         </div>
       </div>
     </footer>
