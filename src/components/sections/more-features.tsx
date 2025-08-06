@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Headphones, Disc, Spotify, Book, CalendarDays, ShoppingCart } from 'lucide-react';
+import { Headphones, Disc, ListMusic, Book, CalendarDays, ShoppingCart } from 'lucide-react';
 
 const features = [
   {
@@ -15,7 +15,7 @@ const features = [
     href: '#shop'
   },
   {
-    icon: Spotify,
+    icon: ListMusic,
     title: 'Playlists',
     description: 'Vibe to handpicked collections, perfect for every moment and mood.',
     href: '#'
