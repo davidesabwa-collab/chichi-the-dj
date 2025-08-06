@@ -14,7 +14,7 @@ const services = [
         icon: Sparkles,
         title: "Corporate Events",
         description: "Pump up the vibe at your next corporate shindig. We'll spin a modern mix that elevates the mood and gets your team moving on the dance floor.",
-        imageUrl: "https://placehold.co/600x400",
+        imageUrl: "https://images.unsplash.com/photo-1531058020387-3be344556be6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxldmVudHxlbnwwfHx8fDE3NTQ0ODUwMDB8MA&ixlib=rb-4.1.0&q=80&w=1080",
         aiHint: "corporate event"
     },
     {
