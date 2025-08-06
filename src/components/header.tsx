@@ -1,4 +1,3 @@
-
 'use client';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export default function Header() {
     <header className="fixed top-0 z-50 w-full bg-black/80 backdrop-blur-sm text-white border-b border-gray-800">
       <div className="container flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Icons.logo className="h-12 w-12 text-primary" />
+          <Icons.logo className="h-12 w-12" width={48} height={48} />
         </Link>
         
         <nav className="hidden lg:flex items-center space-x-8">

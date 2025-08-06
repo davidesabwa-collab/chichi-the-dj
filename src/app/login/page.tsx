@@ -46,7 +46,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
            <Link href="/" className="inline-block">
-             <Icons.logo className="h-20 w-20 mx-auto text-primary" />
+             <Icons.logo className="h-20 w-20 mx-auto" width={80} height={80}/>
           </Link>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-white uppercase">
             Admin Login

@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { Icons } from './icons';
 import { Twitter, Youtube, Instagram, Facebook } from 'lucide-react';
@@ -36,7 +35,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="col-span-1 md:col-span-4">
             <Link href="/" className="inline-block mb-4">
-              <Icons.logo className="h-20 w-20 text-primary" />
+              <Icons.logo className="h-20 w-20" width={80} height={80}/>
             </Link>
             <p className="max-w-xs text-sm">
                 A good DJ is the key to your event’s success. Chichi The DJ is a professional, experienced, and disciplined DJ.
@@ -88,5 +87,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-    
