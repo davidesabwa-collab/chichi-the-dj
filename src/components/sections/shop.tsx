@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 const products = [
   {
@@ -13,62 +11,73 @@ const products = [
   },
   {
     name: 'Arap Trap Bold Summer Sweatshirt',
-    price: 'Ksh 2,500',
+    price: '$25.00',
     discount: null,
     imageUrl: 'https://placehold.co/400x500',
+    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
     aiHint: 'sweatshirt merchandise'
   },
   {
-    name: 'DJ G400 Signature Sweatshirt',
-    price: 'Ksh 2,500',
+    name: 'DJ Signature Sweatshirt',
+    price: '$25.00',
     discount: null,
     imageUrl: 'https://placehold.co/400x500',
+    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
     aiHint: 'signature sweatshirt'
   },
   {
-    name: 'Four Pixels Studio Logo Sweatshirt',
-    price: 'Ksh 2,500',
+    name: 'Studio Logo Sweatshirt',
+    price: '$25.00',
     discount: null,
     imageUrl: 'https://placehold.co/400x500',
+    hoverImageUrl: 'https://placehold.co/400x500/cccccc/333333',
     aiHint: 'logo sweatshirt'
   },
 ];
 
 export default function Shop() {
   return (
-    <section id="shop" className="py-16 sm:py-24 bg-background border-t-2 border-border">
+    <section id="shop" className="pt-4 pb-16 sm:pb-24">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-            <h2 className="text-4xl sm:text-5xl font-bold">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white">
                 Shop
             </h2>
-            <p className="mt-2 text-foreground/70">Check out the latest collection of urban, modern, and fresh merchandise.</p>
-            <Link href="#" className="mt-1 inline-block text-primary underline-offset-4 hover:underline">
-                Go shopping
-            </Link>
+            <p className="mt-2 text-gray-400">Check out the latest collection of urban, modern, and fresh merchandise. <br />
+                <Link href="#" className="text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors">
+                    Go shopping
+                </Link>
+            </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <Link href="#" key={product.name}>
-                <Card className="group overflow-hidden bg-card border-transparent hover:bg-secondary/50 transition-colors">
-                <div className="w-full aspect-[4/5] relative">
+          {products.map((product, index) => (
+            <Link href="#" key={product.name} className="group">
+                <figure className="w-full aspect-[4/5] relative overflow-hidden rounded-lg mb-2 figure-card">
                     <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={product.aiHint}
+                        src={product.imageUrl}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={product.aiHint}
                     />
-                </div>
-                <div className="p-4">
-                    <h3 className="font-semibold truncate">{product.name}</h3>
+                    {product.hoverImageUrl && (
+                         <Image
+                            src={product.hoverImageUrl}
+                            alt={`${product.name} hover`}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={`${product.aiHint} alternate`}
+                        />
+                    )}
+                </figure>
+                <div>
+                    <h3 className="font-medium text-sm text-gray-300 group-hover:underline truncate">{product.name}</h3>
                     <div className="flex items-baseline gap-2 mt-1">
-                        {product.price && <p className="text-sm text-foreground/90">{product.price}</p>}
+                        {product.price && <p className="text-sm text-gray-400 font-semibold">{product.price}</p>}
                         {product.discount && <p className="text-sm text-green-400 font-bold">{product.discount}</p>}
                     </div>
                 </div>
-                </Card>
             </Link>
           ))}
         </div>

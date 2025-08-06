@@ -1,23 +1,21 @@
 import Header from '@/components/header';
 import Hero from '@/components/sections/hero';
-import About from '@/components/sections/about';
-import Services from '@/components/sections/services';
-import Gallery from '@/components/sections/gallery';
-import WhyUs from '@/components/sections/why-us';
-import Booking from '@/components/sections/booking';
+import Mixes from '@/components/sections/mixes';
+import Shop from '@/components/sections/shop';
+import MoreFeatures from '@/components/sections/more-features';
 import Footer from '@/components/footer';
+import Events from '@/components/sections/events';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-[#1a1a1a]">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         <Hero />
-        <About />
-        <Services />
-        <Gallery />
-        <WhyUs />
-        <Booking />
+        <Mixes />
+        <Shop />
+        <MoreFeatures />
+        <Events />
       </main>
       <Footer />
     </div>

@@ -1,38 +1,71 @@
+'use client'
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { PlayCircle } from 'lucide-react';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import Autoplay from "embla-carousel-autoplay"
+
+const carouselImages = [
+  { src: "https://placehold.co/1920x720", alt: "DJ performing", aiHint: "dj performing" },
+  { src: "https://placehold.co/1920x720", alt: "Arap Trap Art", aiHint: "concert crowd" },
+  { src: "https://placehold.co/1920x720", alt: "Graffiti background", aiHint: "graffiti art" },
+];
 
 export default function Hero() {
   return (
-    <section id="home" className="relative h-[calc(100vh-80px)] w-full flex items-center justify-center text-center text-white overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="https://placehold.co/1920x1080"
-          alt="Chichi The DJ performing"
-          fill
-          className="object-cover"
-          priority
-          data-ai-hint="dj performing crowd"
-        />
-        <div className="absolute inset-0 bg-background/80" />
-      </div>
-      <div className="relative z-10 flex flex-col items-center p-4">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-glow">
-          CHICHI THE DJ
-        </h1>
-        <p className="mt-4 text-lg md:text-xl max-w-2xl text-foreground/80 font-medium">
-          A good DJ is the key to your event’s success. Professional, experienced, and disciplined to make every event unforgettable.
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-md">
-          <Button size="lg" className="w-full" asChild>
-           <Link href="#booking">Book Us Today</Link>
-          </Button>
-          <Button size="lg" variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground">
-            <PlayCircle className="mr-2 h-5 w-5"/>
-            Watch Us Work
-          </Button>
+    <section id="home" className="w-full text-center text-white">
+      <div className="container mx-auto px-4 py-10 sm:py-20">
+        <div className="flex flex-col items-center">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-100">
+                Experience The Beat
+            </h1>
+            <p className="mt-4 text-lg max-w-2xl text-gray-300">
+                No ads, no noise, just Chichi The DJ’s best mixes, exclusive tracks, playlists, and more, all in one smooth spot.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+            <Button size="lg" className="bg-white text-black hover:bg-gray-200" asChild>
+                <Link href="#mixes">Play Mixes</Link>
+            </Button>
+            <Button size="lg" variant="outline" className="border-gray-500 text-white hover:bg-gray-800">
+                Create Account
+            </Button>
+            </div>
         </div>
+      </div>
+      
+      <div className="w-full mt-5">
+         <Carousel 
+            opts={{
+                loop: true,
+            }}
+            plugins={[
+                Autoplay({
+                  delay: 5000,
+                }),
+              ]}
+            >
+            <CarouselContent>
+                {carouselImages.map((image, index) => (
+                    <CarouselItem key={index}>
+                         <Image
+                            src={image.src}
+                            alt={image.alt}
+                            width={1920}
+                            height={720}
+                            className="object-cover w-full h-auto"
+                            priority={index === 0}
+                            data-ai-hint={image.aiHint}
+                        />
+                    </CarouselItem>
+                ))}
+            </CarouselContent>
+        </Carousel>
       </div>
     </section>
   );

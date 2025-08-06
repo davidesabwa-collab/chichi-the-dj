@@ -8,53 +8,65 @@ html {
 
 @layer base {
   :root {
-    --background: 220 13% 10%; /* Dark Blue-Gray */
-    --foreground: 48 100% 98%; /* Off-White */
-    --card: 220 13% 14%;
-    --card-foreground: 48 100% 98%;
-    --popover: 220 13% 10%;
-    --popover-foreground: 48 100% 98%;
-    --primary: 45 100% 51%; /* Gold */
-    --primary-foreground: 220 13% 10%;
-    --secondary: 45 100% 70%; /* Lighter Gold */
-    --secondary-foreground: 220 13% 10%;
-    --muted: 220 13% 18%;
-    --muted-foreground: 220 10% 65%;
-    --accent: 45 100% 51%;
-    --accent-foreground: 220 13% 10%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 240 10% 3.9%; /* Near Black */
+    --foreground: 0 0% 98%; /* White */
+    
+    --card: 240 10% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%; /* White */
+    --primary-foreground: 240 10% 3.9%; /* Black */
+
+    --secondary: 240 4.8% 95.9%; /* Off-white for secondary buttons */
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 22%;
-    --input: 220 13% 18%;
-    --ring: 45 100% 51%;
-    --chart-1: 45 100% 51%;
-    --chart-2: 45 100% 70%;
-    --chart-3: 220 13% 30%;
-    --chart-4: 0 0% 98%;
-    --chart-5: 220 13% 40%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 220 13% 10%; /* Dark Blue-Gray */
-    --foreground: 48 100% 98%; /* Off-White */
-    --card: 220 13% 14%;
-    --card-foreground: 48 100% 98%;
-    --popover: 220 13% 10%;
-    --popover-foreground: 48 100% 98%;
-    --primary: 45 100% 51%; /* Gold */
-    --primary-foreground: 220 13% 10%;
-    --secondary: 45 100% 70%; /* Lighter Gold */
-    --secondary-foreground: 220 13% 10%;
-    --muted: 220 13% 18%;
-    --muted-foreground: 220 10% 65%;
-    --accent: 45 100% 51%;
-    --accent-foreground: 220 13% 10%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 240 10% 3.9%; /* Near Black */
+    --foreground: 0 0% 98%; /* White */
+    
+    --card: 240 10% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%; /* White */
+    --primary-foreground: 240 10% 3.9%; /* Black */
+
+    --secondary: 240 4.8% 95.9%; /* Off-white for secondary buttons */
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 22%;
-    --input: 220 13% 18%;
-    --ring: 45 100% 51%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -67,6 +79,38 @@ html {
   }
 }
 
-.text-glow {
-  text-shadow: 0 0 10px hsl(var(--primary) / 0.9), 0 0 25px hsl(var(--primary) / 0.6);
+.figure-card img:first-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.figure-card:hover img:first-child {
+  opacity: 0;
+}
+
+.hover-home-card {
+    @apply border border-gray-800 rounded-lg p-6 transition-all duration-300;
+}
+
+.hover-home-card:hover {
+    @apply bg-gray-900/50 border-gray-700;
+}
+
+.hover-home-card .hover-underline {
+    @apply transition-all;
+}
+
+.hover-home-card:hover .hover-underline {
+    @apply underline;
+}
+
+.bg-grey-10 {
+    background-color: #141414;
+}
+
+.bg-gradientToDown {
+    background: linear-gradient(to bottom, #1a1a1a, #000);
 }

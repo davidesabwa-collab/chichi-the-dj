@@ -1,85 +1,84 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const mixes = [
   {
     title: 'Lagos To The Max Vol 06',
-    coverUrl: 'https://placehold.co/400x400',
+    coverUrl: 'https://placehold.co/600x400',
     aiHint: 'abstract purple',
     genre: 'Afrobeats',
-    date: '8 months ago',
-    views: '575 views'
+    date: '6 months ago',
+    views: '574 views'
   },
   {
     title: 'The Shuffle Vol 02',
-    coverUrl: 'https://placehold.co/400x400',
+    coverUrl: 'https://placehold.co/600x400',
     aiHint: 'abstract blue',
     genre: 'Urban',
     date: '1 year ago',
-    views: '761 views'
+    views: '783 views'
   },
   {
     title: 'Hip Hop Saved My Life Vol 05',
-    coverUrl: 'https://placehold.co/400x400',
+    coverUrl: 'https://placehold.co/600x400',
     aiHint: 'abstract orange',
     genre: 'Hip Hop',
     date: '2 years ago',
-    views: '984 views'
+    views: '565 views'
   },
     {
     title: 'Lagos To The Max Vol 05',
-    coverUrl: 'https://placehold.co/400x400',
+    coverUrl: 'https://placehold.co/600x400',
     aiHint: 'abstract red',
     genre: 'Afrobeats',
     date: '2 years ago',
-    views: '415 views'
+    views: '418 views'
   }
 ];
 
 export default function Mixes() {
   return (
-    <section id="mixes" className="py-16 sm:py-24 bg-background">
+    <section id="mixes" className="py-16 sm:py-24">
       <div className="container mx-auto px-4">
         <div className="mb-8">
-            <h2 className="text-4xl sm:text-5xl font-bold">
-            Mixes
+            <h2 className="text-4xl sm:text-5xl font-bold text-white">
+                Mixes
             </h2>
-            <p className="mt-2 text-foreground/70">Experience ad-free and high quality mixes.</p>
-            <Link href="#" className="mt-1 inline-block text-primary underline-offset-4 hover:underline">
-                Check out mixes
-            </Link>
+            <p className="mt-2 text-gray-400">Experience ad-free and high quality mixes. <br />
+                <Link href="#" className="text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors">
+                    Check out mixes
+                </Link>
+            </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {mixes.map((mix) => (
-            <Link href="#" key={mix.title}>
-                <Card className="flex items-center gap-4 p-3 border-transparent hover:bg-secondary/50 transition-colors">
-                <div className="w-24 h-24 relative flex-shrink-0">
+            <Link href="#" key={mix.title} className="group">
+                <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-2">
                     <Image
-                    src={mix.coverUrl}
-                    alt={`Cover for ${mix.title}`}
-                    width={100}
-                    height={100}
-                    className="object-cover rounded-md w-full h-full"
-                    data-ai-hint={mix.aiHint}
+                        src={mix.coverUrl}
+                        alt={`Cover for ${mix.title}`}
+                        fill
+                        className="object-cover rounded-md group-hover:opacity-80 transition-opacity"
+                        data-ai-hint={mix.aiHint}
                     />
                 </div>
-                <div className="flex-grow">
-                    <h3 className="font-semibold text-lg">{mix.title}</h3>
-                    <p className="text-sm text-foreground/70">
+                <div>
+                    <h3 className="font-semibold text-base text-gray-100 group-hover:underline">{mix.title}</h3>
+                    <p className="text-xs text-gray-500">
                         {mix.genre} &middot; {mix.date} &middot; {mix.views}
                     </p>
                 </div>
-                </Card>
             </Link>
           ))}
         </div>
-        <div className="mt-8">
-             <Link href="#" className="text-primary underline-offset-4 hover:underline text-lg">
+        <div className="mt-12">
+             <Button variant="link" className="text-white p-0 h-auto text-lg hover:no-underline hover:text-gray-300">
                 Load More Mixes
-            </Link>
+            </Button>
         </div>
+        <hr className="mt-12 border-gray-800" />
       </div>
     </section>
   );

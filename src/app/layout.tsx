@@ -1,9 +1,9 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { Space_Grotesk } from 'next/font/google'
+import { Inter } from 'next/font/google'
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: 'Chichi The DJ Official',
@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-       <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
+       <body className={`${inter.variable} font-sans antialiased`}>
         {children}
         <Toaster />
       </body>
