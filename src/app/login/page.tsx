@@ -51,7 +51,7 @@ export default function LoginPage() {
                alt="Chichi The DJ Logo"
                width={80} 
                height={80}
-               className="mx-auto"
+               className="mx-auto rounded-full"
              />
           </Link>
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-white uppercase">

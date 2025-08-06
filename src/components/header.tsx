@@ -32,7 +32,8 @@ export default function Header() {
             src="/chichithedjlogo.png" 
             alt="Chichi The DJ Logo"
             width={48} 
-            height={48} 
+            height={48}
+            className="rounded-full"
           />
         </Link>
         

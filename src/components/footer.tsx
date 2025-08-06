@@ -40,6 +40,7 @@ export default function Footer() {
                 alt="Chichi The DJ Logo"
                 width={80} 
                 height={80}
+                className="rounded-full"
               />
             </Link>
             <p className="max-w-xs text-sm">
