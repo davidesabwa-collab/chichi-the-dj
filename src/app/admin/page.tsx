@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, addEvent, getEvents, deleteEvent, addProduct, getProducts, deleteProduct, addBlog, getBlogs, deleteBlog, getBookings, deleteBooking } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, updateMix, addEvent, getEvents, deleteEvent, updateEvent, addProduct, getProducts, deleteProduct, updateProduct, addBlog, getBlogs, deleteBlog, updateBlog, getBookings, deleteBooking } from '@/lib/firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,6 +21,7 @@ import { Booking } from '@/types/booking';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -30,27 +31,29 @@ export default function AdminPage() {
 
   const [mixes, setMixes] = useState<Mix[]>([]);
   const [newMix, setNewMix] = useState({ title: '', coverUrl: '', genre: '', date: '' });
+  const [editingMix, setEditingMix] = useState<Mix | null>(null);
 
   const [events, setEvents] = useState<Event[]>([]);
   const [newEvent, setNewEvent] = useState({ title: '', posterUrl: '', aiHint: '', date: '', location: '', venue: '' });
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   
   const [products, setProducts] = useState<Product[]>([]);
   const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [newBlog, setNewBlog] = useState({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' });
+  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
+  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        fetchMixes();
-        fetchEvents();
-        fetchProducts();
-        fetchBlogs();
-        fetchBookings();
+        fetchData();
       } else {
         router.push('/login');
       }
@@ -60,249 +63,99 @@ export default function AdminPage() {
     return () => unsubscribe();
   }, [router]);
 
-  const fetchMixes = async () => {
-    const mixesData = await getMixes();
-    setMixes(mixesData);
+  const fetchData = async () => {
+    fetchMixes();
+    fetchEvents();
+    fetchProducts();
+    fetchBlogs();
+    fetchBookings();
   };
 
-  const fetchEvents = async () => {
-    const eventsData = await getEvents();
-    setEvents(eventsData);
-  };
-
-  const fetchProducts = async () => {
-    const productsData = await getProducts();
-    setProducts(productsData);
-  };
-
-  const fetchBlogs = async () => {
-    const blogsData = await getBlogs();
-    setBlogs(blogsData);
-  };
-
-  const fetchBookings = async () => {
-    const bookingsData = await getBookings();
-    setBookings(bookingsData);
-  };
+  const fetchMixes = async () => setMixes(await getMixes());
+  const fetchEvents = async () => setEvents(await getEvents());
+  const fetchProducts = async () => setProducts(await getProducts());
+  const fetchBlogs = async () => setBlogs(await getBlogs());
+  const fetchBookings = async () => setBookings(await getBookings());
 
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      toast({
-        title: 'Signed Out',
-        description: 'You have been successfully signed out.',
-      });
+      toast({ title: 'Signed Out', description: 'You have been successfully signed out.' });
       router.push('/');
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Sign Out Failed',
-        description: error.message,
-      });
+      toast({ variant: 'destructive', title: 'Sign Out Failed', description: error.message });
     }
   };
 
-  const handleAddMix = async (e: React.FormEvent) => {
+  // Generic handle add
+  const handleAdd = async (e: React.FormEvent, addFunc: (data: any) => Promise<any>, data: any, resetState: () => void, fetchFunc: () => void, itemName: string) => {
     e.preventDefault();
-    if (!newMix.title || !newMix.coverUrl || !newMix.genre || !newMix.date) {
-        toast({
-            variant: 'destructive',
-            title: 'Missing Fields',
-            description: 'Please fill out all fields to add a new mix.',
-        });
-        return;
+    if (Object.values(data).some(val => val === '')) {
+      toast({ variant: 'destructive', title: 'Missing Fields', description: `Please fill out all required fields to add a new ${itemName}.` });
+      return;
     }
     try {
-        await addMix({ ...newMix, views: 0 });
-        toast({
-            title: 'Mix Added',
-            description: 'The new mix has been successfully added.',
-        });
-        setNewMix({ title: '', coverUrl: '', genre: '', date: '' });
-        fetchMixes();
+      await addFunc(data);
+      toast({ title: `${itemName} Added`, description: `The new ${itemName} has been successfully added.` });
+      resetState();
+      fetchFunc();
     } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Failed to Add Mix',
-            description: error.message,
-        });
+      toast({ variant: 'destructive', title: `Failed to Add ${itemName}`, description: error.message });
     }
   };
 
-  const handleDeleteMix = async (id: string) => {
+  // Generic handle delete
+  const handleDelete = async (id: string, deleteFunc: (id: string) => Promise<void>, fetchFunc: () => void, itemName: string) => {
     try {
-        await deleteMix(id);
-        toast({
-            title: 'Mix Deleted',
-            description: 'The mix has been successfully deleted.',
-        });
-        fetchMixes();
+      await deleteFunc(id);
+      toast({ title: `${itemName} Deleted`, description: `The ${itemName} has been successfully deleted.` });
+      fetchFunc();
     } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Failed to Delete Mix',
-            description: error.message,
-        });
+      toast({ variant: 'destructive', title: `Failed to Delete ${itemName}`, description: error.message });
     }
-  }
+  };
 
-  const handleAddEvent = async (e: React.FormEvent) => {
+  // Generic handle update
+  const handleUpdate = async (e: React.FormEvent, updateFunc: (id: string, data: any) => Promise<void>, item: any, setEditingItem: (item: any) => void, fetchFunc: () => void, itemName: string) => {
     e.preventDefault();
-    if (!newEvent.title || !newEvent.posterUrl || !newEvent.date || !newEvent.location || !newEvent.venue) {
-        toast({
-            variant: 'destructive',
-            title: 'Missing Fields',
-            description: 'Please fill out all fields to add a new event.',
-        });
-        return;
-    }
+    if (!item || !item.id) return;
     try {
-        await addEvent(newEvent);
-        toast({
-            title: 'Event Added',
-            description: 'The new event has been successfully added.',
-        });
-        setNewEvent({ title: '', posterUrl: '', aiHint: '', date: '', location: '', venue: '' });
-        fetchEvents();
+      await updateFunc(item.id, item);
+      toast({ title: `${itemName} Updated`, description: `The ${itemName} has been successfully updated.` });
+      setEditingItem(null);
+      fetchFunc();
+      setIsDialogOpen(false);
     } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Failed to Add Event',
-            description: error.message,
-        });
+      toast({ variant: 'destructive', title: `Failed to Update ${itemName}`, description: error.message });
     }
   };
-
-  const handleDeleteEvent = async (id: string) => {
-    try {
-        await deleteEvent(id);
-        toast({
-            title: 'Event Deleted',
-            description: 'The event has been successfully deleted.',
-        });
-        fetchEvents();
-    } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Failed to Delete Event',
-            description: error.message,
-        });
-    }
-  }
-
-  const handleAddProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProduct.name || !newProduct.price || !newProduct.imageUrl || !newProduct.aiHint) {
-        toast({
-            variant: 'destructive',
-            title: 'Missing Fields',
-            description: 'Please fill out all required fields to add a new product.',
-        });
-        return;
-    }
-    try {
-        await addProduct(newProduct);
-        toast({
-            title: 'Product Added',
-            description: 'The new product has been successfully added.',
-        });
-        setNewProduct({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
-        fetchProducts();
-    } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Failed to Add Product',
-            description: error.message,
-        });
-    }
-  };
-
-  const handleDeleteProduct = async (id: string) => {
-    try {
-        await deleteProduct(id);
-        toast({
-            title: 'Product Deleted',
-            description: 'The product has been successfully deleted.',
-        });
-        fetchProducts();
-    } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Failed to Delete Product',
-            description: error.message,
-        });
-    }
-  }
-
-  const handleAddBlog = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newBlog.title || !newBlog.content || !newBlog.thumbnailUrl || !newBlog.date) {
-        toast({
-            variant: 'destructive',
-            title: 'Missing Fields',
-            description: 'Please fill out all required fields to add a new blog post.',
-        });
-        return;
-    }
-    try {
-        await addBlog(newBlog);
-        toast({
-            title: 'Blog Post Added',
-            description: 'The new blog post has been successfully added.',
-        });
-        setNewBlog({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' });
-        fetchBlogs();
-    } catch (error: any) {
-         toast({
-            variant: 'destructive',
-            title: 'Failed to Add Blog Post',
-            description: error.message,
-        });
-    }
-  };
-
-  const handleDeleteBlog = async (id: string) => {
-    try {
-        await deleteBlog(id);
-        toast({
-            title: 'Blog Post Deleted',
-            description: 'The blog post has been successfully deleted.',
-        });
-        fetchBlogs();
-    } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Failed to Delete Blog Post',
-            description: error.message,
-        });
-    }
-  }
-
-  const handleDeleteBooking = async (id: string) => {
-    try {
-        await deleteBooking(id);
-        toast({
-            title: 'Booking Deleted',
-            description: 'The booking request has been successfully deleted.',
-        });
-        fetchBookings();
-    } catch (error: any) {
-        toast({
-            variant: 'destructive',
-            title: 'Failed to Delete Booking',
-            description: error.message,
-        });
-    }
-  };
-
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <p className="text-white">Loading...</p>
-      </div>
-    );
+    return <div className="flex min-h-screen items-center justify-center bg-black"><p className="text-white">Loading...</p></div>;
   }
+  
+  const renderEditDialog = (item: any, setItem: (item: any) => void, fields: {key: string, label: string, type?: string}[], handleSubmit: (e: React.FormEvent) => void, title: string) => (
+    <Dialog open={isDialogOpen && item} onOpenChange={(open) => !open && setIsDialogOpen(false)}>
+      <DialogContent className="bg-gray-900 border-gray-700 text-white">
+        <DialogHeader>
+          <DialogTitle>Edit {title}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {fields.map(field => (
+            <div key={field.key}>
+              <Label htmlFor={`edit-${field.key}`}>{field.label}</Label>
+              {field.type === 'textarea' ? (
+                 <Textarea id={`edit-${field.key}`} value={item?.[field.key] || ''} onChange={(e) => setItem({...item, [field.key]: e.target.value})} className="bg-gray-800 border-gray-700" />
+              ) : (
+                <Input id={`edit-${field.key}`} value={item?.[field.key] || ''} onChange={(e) => setItem({...item, [field.key]: e.target.value})} className="bg-gray-800 border-gray-700" />
+              )}
+            </div>
+          ))}
+          <Button type="submit" className="w-full">Save Changes</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
@@ -326,7 +179,7 @@ export default function AdminPage() {
                 <Card key={booking.id} className="bg-gray-800 border-gray-700">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle className="text-xl">{booking.eventType}</CardTitle>
-                    <Button variant="destructive" size="sm" onClick={() => booking.id && handleDeleteBooking(booking.id)}>Delete</Button>
+                    <Button variant="destructive" size="sm" onClick={() => booking.id && handleDelete(booking.id, deleteBooking, fetchBookings, 'Booking')}>Delete</Button>
                   </CardHeader>
                   <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
                     <p><strong className="text-gray-400">Name:</strong> {booking.name}</p>
@@ -341,7 +194,6 @@ export default function AdminPage() {
               )}
             </div>
           </div>
-
           <Separator className="bg-gray-700"/>
 
           {/* Manage Mixes */}
@@ -350,45 +202,30 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                   <h3 className="text-xl font-bold mb-4">Add a New Mix</h3>
-                  <form onSubmit={handleAddMix} className="space-y-4">
-                      <div>
-                          <Label htmlFor="mix-title">Title</Label>
-                          <Input id="mix-title" value={newMix.title} onChange={(e) => setNewMix({...newMix, title: e.target.value})} placeholder="e.g., Lagos To The Max Vol 07" className="bg-gray-800 border-gray-700" />
-                      </div>
-                       <div>
-                          <Label htmlFor="mix-coverUrl">Cover Image URL</Label>
-                          <Input id="mix-coverUrl" value={newMix.coverUrl} onChange={(e) => setNewMix({...newMix, coverUrl: e.target.value})} placeholder="https://placehold.co/600x400" className="bg-gray-800 border-gray-700" />
-                      </div>
-                       <div>
-                          <Label htmlFor="mix-genre">Genre</Label>
-                          <Input id="mix-genre" value={newMix.genre} onChange={(e) => setNewMix({...newMix, genre: e.target.value})} placeholder="e.g., Afrobeats" className="bg-gray-800 border-gray-700" />
-                      </div>
-                       <div>
-                          <Label htmlFor="mix-date">Release Date</Label>
-                          <Input id="mix-date" value={newMix.date} onChange={(e) => setNewMix({...newMix, date: e.target.value})} placeholder="e.g., 1 week ago" className="bg-gray-800 border-gray-700" />
-                      </div>
+                  <form onSubmit={(e) => handleAdd(e, addMix, newMix, () => setNewMix({ title: '', coverUrl: '', genre: '', date: '' }), fetchMixes, 'Mix')} className="space-y-4">
+                      <Input value={newMix.title} onChange={(e) => setNewMix({...newMix, title: e.target.value})} placeholder="Title" className="bg-gray-800 border-gray-700" />
+                      <Input value={newMix.coverUrl} onChange={(e) => setNewMix({...newMix, coverUrl: e.target.value})} placeholder="Cover URL" className="bg-gray-800 border-gray-700" />
+                      <Input value={newMix.genre} onChange={(e) => setNewMix({...newMix, genre: e.target.value})} placeholder="Genre" className="bg-gray-800 border-gray-700" />
+                      <Input value={newMix.date} onChange={(e) => setNewMix({...newMix, date: e.target.value})} placeholder="Date" className="bg-gray-800 border-gray-700" />
                       <Button type="submit" className="w-full">Add Mix</Button>
                   </form>
               </div>
               <div>
                   <h3 className="text-xl font-bold mb-4">Existing Mixes</h3>
                   <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
-                      {mixes.length > 0 ? mixes.map(mix => (
+                      {mixes.map(mix => (
                           <div key={mix.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
-                              <div>
-                                  <p className="font-semibold">{mix.title}</p>
-                                  <p className="text-sm text-gray-400">{mix.genre} - {mix.date}</p>
+                              <p className="font-semibold">{mix.title}</p>
+                              <div className="flex gap-2">
+                                <Button variant="outline" size="sm" onClick={() => { setEditingMix(mix); setIsDialogOpen(true); }}>Edit</Button>
+                                <Button variant="destructive" size="sm" onClick={() => mix.id && handleDelete(mix.id, deleteMix, fetchMixes, 'Mix')}>Delete</Button>
                               </div>
-                              <Button variant="destructive" size="sm" onClick={() => mix.id && handleDeleteMix(mix.id)}>Delete</Button>
                           </div>
-                      )) : (
-                          <p className="text-gray-500">No mixes found. Add one to get started.</p>
-                      )}
+                      ))}
                   </div>
               </div>
             </div>
           </div>
-
           <Separator className="bg-gray-700"/>
 
           {/* Manage Events */}
@@ -397,53 +234,32 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
                 <div>
                     <h3 className="text-xl font-bold mb-4">Add a New Event</h3>
-                    <form onSubmit={handleAddEvent} className="space-y-4">
-                        <div>
-                            <Label htmlFor="event-title">Title</Label>
-                            <Input id="event-title" value={newEvent.title} onChange={(e) => setNewEvent({...newEvent, title: e.target.value})} placeholder="e.g., Summer Fest" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="event-posterUrl">Poster URL</Label>
-                            <Input id="event-posterUrl" value={newEvent.posterUrl} onChange={(e) => setNewEvent({...newEvent, posterUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
-                        </div>
-                         <div>
-                            <Label htmlFor="event-ai-hint">AI Hint for Poster</Label>
-                            <Input id="event-ai-hint" value={newEvent.aiHint} onChange={(e) => setNewEvent({...newEvent, aiHint: e.target.value})} placeholder="e.g., summer party" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="event-date">Date</Label>
-                            <Input id="event-date" type="date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} placeholder="e.g., Happening in 2 weeks" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="event-location">Location</Label>
-                            <Input id="event-location" value={newEvent.location} onChange={(e) => setNewEvent({...newEvent, location: e.target.value})} placeholder="e.g., Seattle, WA" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="event-venue">Venue</Label>
-                            <Input id="event-venue" value={newEvent.venue} onChange={(e) => setNewEvent({...newEvent, venue: e.target.value})} placeholder="e.g., Gas Works Park" className="bg-gray-800 border-gray-700" />
-                        </div>
+                    <form onSubmit={(e) => handleAdd(e, addEvent, newEvent, () => setNewEvent({ title: '', posterUrl: '', aiHint: '', date: '', location: '', venue: '' }), fetchEvents, 'Event')} className="space-y-4">
+                        <Input value={newEvent.title} onChange={(e) => setNewEvent({...newEvent, title: e.target.value})} placeholder="Title" className="bg-gray-800 border-gray-700" />
+                        <Input value={newEvent.posterUrl} onChange={(e) => setNewEvent({...newEvent, posterUrl: e.target.value})} placeholder="Poster URL" className="bg-gray-800 border-gray-700" />
+                        <Input value={newEvent.aiHint} onChange={(e) => setNewEvent({...newEvent, aiHint: e.target.value})} placeholder="AI Hint" className="bg-gray-800 border-gray-700" />
+                        <Input type="date" value={newEvent.date} onChange={(e) => setNewEvent({...newEvent, date: e.target.value})} className="bg-gray-800 border-gray-700" />
+                        <Input value={newEvent.location} onChange={(e) => setNewEvent({...newEvent, location: e.target.value})} placeholder="Location" className="bg-gray-800 border-gray-700" />
+                        <Input value={newEvent.venue} onChange={(e) => setNewEvent({...newEvent, venue: e.target.value})} placeholder="Venue" className="bg-gray-800 border-gray-700" />
                         <Button type="submit" className="w-full">Add Event</Button>
                     </form>
                 </div>
                 <div>
                     <h3 className="text-xl font-bold mb-4">Existing Events</h3>
                     <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
-                        {events.length > 0 ? events.map(event => (
+                        {events.map(event => (
                             <div key={event.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
-                                <div>
-                                    <p className="font-semibold">{event.title}</p>
-                                    <p className="text-sm text-gray-400">{event.venue} - {event.date}</p>
+                                <p className="font-semibold">{event.title}</p>
+                                <div className="flex gap-2">
+                                    <Button variant="outline" size="sm" onClick={() => { setEditingEvent(event); setIsDialogOpen(true); }}>Edit</Button>
+                                    <Button variant="destructive" size="sm" onClick={() => event.id && handleDelete(event.id, deleteEvent, fetchEvents, 'Event')}>Delete</Button>
                                 </div>
-                                <Button variant="destructive" size="sm" onClick={() => event.id && handleDeleteEvent(event.id)}>Delete</Button>
                             </div>
-                        )) : (
-                            <p className="text-gray-500">No events found. Add one to get started.</p>
-                        )}
+                        ))}
                     </div>
                 </div>
             </div>
           </div>
-
           <Separator className="bg-gray-700"/>
 
           {/* Manage Shop */}
@@ -452,49 +268,31 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
                 <div>
                     <h3 className="text-xl font-bold mb-4">Add a New Product</h3>
-                    <form onSubmit={handleAddProduct} className="space-y-4">
-                        <div>
-                            <Label htmlFor="product-name">Product Name</Label>
-                            <Input id="product-name" value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} placeholder="e.g., T-shirt" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="product-price">Price</Label>
-                            <Input id="product-price" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} placeholder="e.g., $25.00" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="product-imageUrl">Image URL</Label>
-                            <Input id="product-imageUrl" value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="product-hoverImageUrl">Hover Image URL (Optional)</Label>
-                            <Input id="product-hoverImageUrl" value={newProduct.hoverImageUrl} onChange={(e) => setNewProduct({...newProduct, hoverImageUrl: e.target.value})} placeholder="https://placehold.co/400x500" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="product-aiHint">AI Hint for Image</Label>
-                            <Input id="product-aiHint" value={newProduct.aiHint} onChange={(e) => setNewProduct({...newProduct, aiHint: e.target.value})} placeholder="e.g., t-shirt merchandise" className="bg-gray-800 border-gray-700" />
-                        </div>
+                    <form onSubmit={(e) => handleAdd(e, addProduct, newProduct, () => setNewProduct({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' }), fetchProducts, 'Product')} className="space-y-4">
+                        <Input value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} placeholder="Product Name" className="bg-gray-800 border-gray-700" />
+                        <Input value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} placeholder="Price" className="bg-gray-800 border-gray-700" />
+                        <Input value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} placeholder="Image URL" className="bg-gray-800 border-gray-700" />
+                        <Input value={newProduct.hoverImageUrl} onChange={(e) => setNewProduct({...newProduct, hoverImageUrl: e.target.value})} placeholder="Hover Image URL (Optional)" className="bg-gray-800 border-gray-700" />
+                        <Input value={newProduct.aiHint} onChange={(e) => setNewProduct({...newProduct, aiHint: e.target.value})} placeholder="AI Hint" className="bg-gray-800 border-gray-700" />
                         <Button type="submit" className="w-full">Add Product</Button>
                     </form>
                 </div>
                 <div>
                     <h3 className="text-xl font-bold mb-4">Existing Products</h3>
-                    <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
-                        {products.length > 0 ? products.map(product => (
+                     <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
+                        {products.map(product => (
                             <div key={product.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
-                                <div>
-                                    <p className="font-semibold">{product.name}</p>
-                                    <p className="text-sm text-gray-400">{product.price}</p>
+                                <p className="font-semibold">{product.name}</p>
+                                <div className="flex gap-2">
+                                  <Button variant="outline" size="sm" onClick={() => { setEditingProduct(product); setIsDialogOpen(true); }}>Edit</Button>
+                                  <Button variant="destructive" size="sm" onClick={() => product.id && handleDelete(product.id, deleteProduct, fetchProducts, 'Product')}>Delete</Button>
                                 </div>
-                                <Button variant="destructive" size="sm" onClick={() => product.id && handleDeleteProduct(product.id)}>Delete</Button>
                             </div>
-                        )) : (
-                            <p className="text-gray-500">No products found. Add one to get started.</p>
-                        )}
+                        ))}
                     </div>
                 </div>
             </div>
           </div>
-
           <Separator className="bg-gray-700"/>
 
            {/* Manage Blog */}
@@ -503,53 +301,52 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
                 <div>
                     <h3 className="text-xl font-bold mb-4">Add a New Blog Post</h3>
-                    <form onSubmit={handleAddBlog} className="space-y-4">
-                        <div>
-                            <Label htmlFor="blog-title">Title</Label>
-                            <Input id="blog-title" value={newBlog.title} onChange={(e) => setNewBlog({...newBlog, title: e.target.value})} placeholder="e.g., New Album Review" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="blog-content">Content</Label>
-                            <Textarea id="blog-content" value={newBlog.content} onChange={(e) => setNewBlog({...newBlog, content: e.target.value})} placeholder="Write your blog post here..." className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="blog-thumbnailUrl">Thumbnail URL</Label>
-                            <Input id="blog-thumbnailUrl" value={newBlog.thumbnailUrl} onChange={(e) => setNewBlog({...newBlog, thumbnailUrl: e.target.value})} placeholder="https://placehold.co/600x400" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="blog-ai-hint">AI Hint for Thumbnail</Label>
-                            <Input id="blog-ai-hint" value={newBlog.aiHint} onChange={(e) => setNewBlog({...newBlog, aiHint: e.target.value})} placeholder="e.g., music production" className="bg-gray-800 border-gray-700" />
-                        </div>
-                        <div>
-                            <Label htmlFor="blog-date">Publication Date</Label>
-                            <Input id="blog-date" value={newBlog.date} onChange={(e) => setNewBlog({...newBlog, date: e.target.value})} placeholder="e.g., June 12, 2024" className="bg-gray-800 border-gray-700" />
-                        </div>
+                    <form onSubmit={(e) => handleAdd(e, addBlog, newBlog, () => setNewBlog({ title: '', content: '', thumbnailUrl: '', aiHint: '', date: '' }), fetchBlogs, 'Blog Post')} className="space-y-4">
+                        <Input value={newBlog.title} onChange={(e) => setNewBlog({...newBlog, title: e.target.value})} placeholder="Title" className="bg-gray-800 border-gray-700" />
+                        <Textarea value={newBlog.content} onChange={(e) => setNewBlog({...newBlog, content: e.target.value})} placeholder="Content" className="bg-gray-800 border-gray-700" />
+                        <Input value={newBlog.thumbnailUrl} onChange={(e) => setNewBlog({...newBlog, thumbnailUrl: e.target.value})} placeholder="Thumbnail URL" className="bg-gray-800 border-gray-700" />
+                        <Input value={newBlog.aiHint} onChange={(e) => setNewBlog({...newBlog, aiHint: e.target.value})} placeholder="AI Hint" className="bg-gray-800 border-gray-700" />
+                        <Input value={newBlog.date} onChange={(e) => setNewBlog({...newBlog, date: e.target.value})} placeholder="Date" className="bg-gray-800 border-gray-700" />
                         <Button type="submit" className="w-full">Add Blog Post</Button>
                     </form>
                 </div>
                 <div>
                     <h3 className="text-xl font-bold mb-4">Existing Posts</h3>
                     <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
-                        {blogs.length > 0 ? blogs.map(blog => (
+                        {blogs.map(blog => (
                             <div key={blog.id} className="flex items-center justify-between bg-gray-800 p-4 rounded-md">
-                                <div>
-                                    <p className="font-semibold">{blog.title}</p>
-                                    <p className="text-sm text-gray-400">{blog.date}</p>
+                                <p className="font-semibold">{blog.title}</p>
+                                <div className="flex gap-2">
+                                  <Button variant="outline" size="sm" onClick={() => { setEditingBlog(blog); setIsDialogOpen(true); }}>Edit</Button>
+                                  <Button variant="destructive" size="sm" onClick={() => blog.id && handleDelete(blog.id, deleteBlog, fetchBlogs, 'Blog Post')}>Delete</Button>
                                 </div>
-                                <Button variant="destructive" size="sm" onClick={() => blog.id && handleDeleteBlog(blog.id)}>Delete</Button>
                             </div>
-                        )) : (
-                            <p className="text-gray-500">No blog posts found. Add one to get started.</p>
-                        )}
+                        ))}
                     </div>
                 </div>
             </div>
           </div>
-
-
         </div>
       </main>
       <Footer />
+      
+      {renderEditDialog(editingMix, setEditingMix, [
+          { key: 'title', label: 'Title' }, { key: 'coverUrl', label: 'Cover URL' }, { key: 'genre', label: 'Genre' }, { key: 'date', label: 'Date' }
+      ], (e) => handleUpdate(e, updateMix, editingMix, setEditingMix, fetchMixes, 'Mix'), 'Mix')}
+
+      {renderEditDialog(editingEvent, setEditingEvent, [
+          { key: 'title', label: 'Title' }, { key: 'posterUrl', label: 'Poster URL' }, { key: 'aiHint', label: 'AI Hint' }, { key: 'date', label: 'Date', type: 'date' }, { key: 'location', label: 'Location' }, { key: 'venue', label: 'Venue' }
+      ], (e) => handleUpdate(e, updateEvent, editingEvent, setEditingEvent, fetchEvents, 'Event'), 'Event')}
+      
+      {renderEditDialog(editingProduct, setEditingProduct, [
+          { key: 'name', label: 'Name' }, { key: 'price', label: 'Price' }, { key: 'imageUrl', label: 'Image URL' }, { key: 'hoverImageUrl', label: 'Hover Image URL' }, { key: 'aiHint', label: 'AI Hint' }
+      ], (e) => handleUpdate(e, updateProduct, editingProduct, setEditingProduct, fetchProducts, 'Product'), 'Product')}
+
+      {renderEditDialog(editingBlog, setEditingBlog, [
+          { key: 'title', label: 'Title' }, { key: 'content', label: 'Content', type: 'textarea' }, { key: 'thumbnailUrl', label: 'Thumbnail URL' }, { key: 'aiHint', label: 'AI Hint' }, { key: 'date', label: 'Date' }
+      ], (e) => handleUpdate(e, updateBlog, editingBlog, setEditingBlog, fetchBlogs, 'Blog'), 'Blog Post')}
     </div>
   );
 }
+
+    

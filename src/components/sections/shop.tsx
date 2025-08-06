@@ -7,6 +7,7 @@ import { Product } from '@/types/product';
 
 export default async function Shop() {
   const products: Product[] = await getProducts();
+  const featuredProducts = products.slice(0, 6);
 
   return (
     <section id="shop" className="py-16 sm:py-24 bg-black">
@@ -21,8 +22,8 @@ export default async function Shop() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {products.map((product) => (
-            <Link href="#" key={product.id} className="group">
+          {featuredProducts.map((product) => (
+            <Link href={`/shop/${product.id}`} key={product.id} className="group">
               <figure className="w-full aspect-[4/5] relative overflow-hidden rounded-lg mb-4 figure-card transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20">
                 <Image
                   src={product.imageUrl}
@@ -50,11 +51,13 @@ export default async function Shop() {
           ))}
         </div>
          <div className="text-center mt-12">
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors uppercase tracking-widest font-bold">
-                View Full Shop
+            <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors uppercase tracking-widest font-bold">
+                <Link href="/shop">View Full Shop</Link>
             </Button>
         </div>
       </div>
     </section>
   );
 }
+
+    

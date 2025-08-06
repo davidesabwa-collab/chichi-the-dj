@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Event } from '@/types/event';
 
 export default async function Events() {
   const events: Event[] = await getEvents();
+  const recentEvents = events.slice(0, 4);
 
   return (
     <section id="events" className="py-16 sm:py-24">
@@ -15,16 +17,13 @@ export default async function Events() {
             <h2 className="text-4xl sm:text-5xl font-bold text-white">
                 Events
             </h2>
-            <p className="mt-2 text-gray-400">Check all past and upcoming events that Chichi The DJ will be performing. <br />
-                <Link href="#" className="text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors">
-                    All Events
-                </Link>
+            <p className="mt-2 text-gray-400">Check all past and upcoming events that Chichi The DJ will be performing.
             </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {events.map((event) => (
-            <Link href="#" key={event.id} className="group">
+          {recentEvents.map((event) => (
+            <Link href={`/events/${event.id}`} key={event.id} className="group">
                 <div className="relative w-full aspect-[4/5] overflow-hidden rounded-lg mb-3">
                     <Image
                         src={event.posterUrl}
@@ -46,7 +45,16 @@ export default async function Events() {
             </Link>
           ))}
         </div>
+         {events.length > 4 && (
+            <div className="text-center mt-12">
+                <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors uppercase tracking-widest font-bold">
+                    <Link href="/events">All Events</Link>
+                </Button>
+            </div>
+        )}
       </div>
     </section>
   );
 }
+
+    

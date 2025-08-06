@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -18,16 +19,13 @@ export default async function BlogSection() {
                 From The Blog
             </h2>
             <p className="mt-2 text-gray-400">
-                Stay updated with album reviews, music news, and exclusive insights. <br />
-                <Link href="#" className="text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors">
-                    Read all posts
-                </Link>
+                Stay updated with album reviews, music news, and exclusive insights.
             </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {recentPosts.map((post) => (
-            <Link href="#" key={post.id} className="group">
+            <Link href={`/blog/${post.id}`} key={post.id} className="group">
                 <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-4">
                     <Image
                         src={post.thumbnailUrl}
@@ -46,10 +44,10 @@ export default async function BlogSection() {
             </Link>
           ))}
         </div>
-        {blogs.length > 3 && (
+        {blogs.length > 0 && (
             <div className="text-center mt-12">
-                <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors uppercase tracking-widest font-bold">
-                    View All Posts
+                <Button asChild size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors uppercase tracking-widest font-bold">
+                    <Link href="/blog">View All Posts</Link>
                 </Button>
             </div>
         )}
@@ -57,3 +55,5 @@ export default async function BlogSection() {
     </section>
   );
 }
+
+    

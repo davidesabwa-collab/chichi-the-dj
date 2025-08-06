@@ -1,7 +1,8 @@
+
 'use client';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, Search, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Icons } from "@/components/icons";
 import {
   Sheet,
@@ -9,18 +10,13 @@ import {
   SheetClose,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Input } from "@/components/ui/input";
 
 const navLinks = [
   { name: "About", href: "/#about" },
   { name: "Services", href: "/#services" },
-  { name: "Shop", href: "/#shop" },
+  { name: "Shop", href: "/shop" },
+  { name: "Blog", href: "/blog" },
+  { name: "Events", href: "/events" },
   { name: "Gallery", href: "/#gallery" },
   { name: "Contact", href: "/#booking" },
 ];
@@ -43,8 +39,8 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
              <Button asChild variant="default" size="sm" className="hidden lg:inline-flex rounded-full uppercase tracking-widest font-bold">
-                <Link href="/login">
-                  Log in
+                <Link href="/#booking">
+                  Book Now
                 </Link>
             </Button>
             <Sheet>
@@ -67,8 +63,8 @@ export default function Header() {
                         </div>
                          <div className="mt-8">
                             <Button asChild variant="default" size="lg" className="w-full rounded-md uppercase tracking-widest font-bold">
-                               <Link href="/login">
-                                 Log in
+                               <Link href="/#booking">
+                                 Book Now
                                </Link>
                             </Button>
                         </div>
@@ -80,3 +76,5 @@ export default function Header() {
     </header>
   );
 }
+
+    

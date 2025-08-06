@@ -1,120 +1,67 @@
 
 import { db } from './firebase';
-import { collection, addDoc, getDocs, doc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, deleteDoc, Timestamp, getDoc, updateDoc } from 'firebase/firestore';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
 import { Blog } from '@/types/blog';
 import { Booking } from '@/types/booking';
 
-// Mixes Collection
+// Generic function to get a single document by ID
+const getDocument = async <T>(collectionName: string, id: string): Promise<T | null> => {
+    const docRef = doc(db, collectionName, id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as T;
+    }
+    return null;
+};
+
+// --- Mixes ---
 const mixesCollection = collection(db, 'mixes');
+export const addMix = async (mixData: Omit<Mix, 'id'>) => addDoc(mixesCollection, { ...mixData, views: 0 });
+export const getMixes = async (): Promise<Mix[]> => (await getDocs(mixesCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Mix));
+export const deleteMix = async (id: string) => deleteDoc(doc(db, 'mixes', id));
+export const updateMix = async (id: string, mixData: Partial<Mix>) => updateDoc(doc(db, 'mixes', id), mixData);
+export const getMix = (id: string): Promise<Mix | null> => getDocument<Mix>('mixes', id);
 
-// Add a new mix
-export const addMix = async (mixData: Omit<Mix, 'id'>): Promise<string> => {
-  const docRef = await addDoc(mixesCollection, mixData);
-  return docRef.id;
-};
-
-// Get all mixes
-export const getMixes = async (): Promise<Mix[]> => {
-  const snapshot = await getDocs(mixesCollection);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Mix));
-};
-
-// Delete a mix
-export const deleteMix = async (id: string): Promise<void> => {
-  const mixDoc = doc(db, 'mixes', id);
-  await deleteDoc(mixDoc);
-};
-
-// Events Collection
+// --- Events ---
 const eventsCollection = collection(db, 'events');
+export const addEvent = async (eventData: Omit<Event, 'id'>) => addDoc(eventsCollection, eventData);
+export const getEvents = async (): Promise<Event[]> => (await getDocs(eventsCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
+export const deleteEvent = async (id: string) => deleteDoc(doc(db, 'events', id));
+export const updateEvent = async (id: string, eventData: Partial<Event>) => updateDoc(doc(db, 'events', id), eventData);
+export const getEvent = (id: string): Promise<Event | null> => getDocument<Event>('events', id);
 
-// Add a new event
-export const addEvent = async (eventData: Omit<Event, 'id'>): Promise<string> => {
-    const docRef = await addDoc(eventsCollection, eventData);
-    return docRef.id;
-};
-
-// Get all events
-export const getEvents = async (): Promise<Event[]> => {
-    const snapshot = await getDocs(eventsCollection);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
-};
-
-// Delete an event
-export const deleteEvent = async (id: string): Promise<void> => {
-    const eventDoc = doc(db, 'events', id);
-    await deleteDoc(eventDoc);
-};
-
-// Products Collection
+// --- Products ---
 const productsCollection = collection(db, 'products');
+export const addProduct = async (productData: Omit<Product, 'id'>) => addDoc(productsCollection, productData);
+export const getProducts = async (): Promise<Product[]> => (await getDocs(productsCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
+export const deleteProduct = async (id: string) => deleteDoc(doc(db, 'products', id));
+export const updateProduct = async (id: string, productData: Partial<Product>) => updateDoc(doc(db, 'products', id), productData);
+export const getProduct = (id: string): Promise<Product | null> => getDocument<Product>('products', id);
 
-// Add a new product
-export const addProduct = async (productData: Omit<Product, 'id'>): Promise<string> => {
-    const docRef = await addDoc(productsCollection, productData);
-    return docRef.id;
-};
-
-// Get all products
-export const getProducts = async (): Promise<Product[]> => {
-    const snapshot = await getDocs(productsCollection);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
-};
-
-// Delete a product
-export const deleteProduct = async (id: string): Promise<void> => {
-    const productDoc = doc(db, 'products', id);
-    await deleteDoc(productDoc);
-};
-
-// Blogs Collection
+// --- Blogs ---
 const blogsCollection = collection(db, 'blogs');
+export const addBlog = async (blogData: Omit<Blog, 'id'>) => addDoc(blogsCollection, blogData);
+export const getBlogs = async (): Promise<Blog[]> => (await getDocs(blogsCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Blog));
+export const deleteBlog = async (id: string) => deleteDoc(doc(db, 'blogs', id));
+export const updateBlog = async (id: string, blogData: Partial<Blog>) => updateDoc(doc(db, 'blogs', id), blogData);
+export const getBlog = (id: string): Promise<Blog | null> => getDocument<Blog>('blogs', id);
 
-// Add a new blog
-export const addBlog = async (blogData: Omit<Blog, 'id'>): Promise<string> => {
-    const docRef = await addDoc(blogsCollection, blogData);
-    return docRef.id;
-};
-
-// Get all blogs
-export const getBlogs = async (): Promise<Blog[]> => {
-    const snapshot = await getDocs(blogsCollection);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Blog));
-};
-
-// Delete a blog
-export const deleteBlog = async (id: string): Promise<void> => {
-    const blogDoc = doc(db, 'blogs', id);
-    await deleteDoc(blogDoc);
-};
-
-// Bookings Collection
+// --- Bookings ---
 const bookingsCollection = collection(db, 'bookings');
-
-// Add a new booking
-export const addBooking = async (bookingData: Omit<Booking, 'id'>): Promise<string> => {
-  const docRef = await addDoc(bookingsCollection, bookingData);
-  return docRef.id;
-};
-
-// Get all bookings
+export const addBooking = async (bookingData: Omit<Booking, 'id'>) => addDoc(bookingsCollection, bookingData);
 export const getBookings = async (): Promise<Booking[]> => {
   const snapshot = await getDocs(bookingsCollection);
   return snapshot.docs.map(doc => {
     const data = doc.data();
-    // Convert Firestore Timestamp to JavaScript Date object
     if (data.date && data.date instanceof Timestamp) {
       data.date = data.date.toDate();
     }
     return { id: doc.id, ...data } as Booking;
   });
 };
+export const deleteBooking = async (id: string) => deleteDoc(doc(db, 'bookings', id));
 
-// Delete a booking
-export const deleteBooking = async (id: string): Promise<void> => {
-  const bookingDoc = doc(db, 'bookings', id);
-  await deleteDoc(bookingDoc);
-};
+    

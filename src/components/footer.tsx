@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Icons } from './icons';
 import { Twitter, Youtube, Instagram, Facebook } from 'lucide-react';
@@ -6,17 +7,18 @@ const footerSections = {
   "Company": [
     { name: "About", href: "/#about" },
     { name: "Services", href: "/#services" },
-    { name: "Shop", href: "/#shop" },
     { name: "Gallery", href: "/#gallery" },
+  ],
+  "Content": [
+    { name: "Shop", href: "/shop" },
+    { name: "Blog", href: "/blog" },
+    { name: "Events", href: "/events" },
+    { name: "Mixes", href: "/#mixes" },
   ],
   "Connect": [
     { name: "Contact Us", href: "/#booking" },
     { name: "Book Now", href: "/#booking" },
     { name: "FAQ", href: "#" },
-  ],
-  "Legal": [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
   ],
 };
 
@@ -86,3 +88,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+    
