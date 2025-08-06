@@ -7,7 +7,7 @@ const services = [
         icon: Sparkles,
         title: "Weddings",
         description: "We spin from the heart to create a unique vibe that reflects your style. If you want feel-good music for all ages and an epic dance party, we're the perfect match!",
-        imageUrl: "https://placehold.co/600x400",
+        imageUrl: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3ZWRkaW5nfGVufDB8fHx8MTc1NDQ4NDc2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
         aiHint: "wedding party"
     },
     {
