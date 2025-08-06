@@ -2,7 +2,6 @@ import Header from '@/components/header';
 import Hero from '@/components/sections/hero';
 import Mixes from '@/components/sections/mixes';
 import Shop from '@/components/sections/shop';
-import Events from '@/components/sections/events';
 import Booking from '@/components/sections/booking';
 import Footer from '@/components/footer';
 import About from '@/components/sections/about';

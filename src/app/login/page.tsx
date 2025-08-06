@@ -89,12 +89,6 @@ export default function LoginPage() {
             {isLoading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
-         <p className="text-center text-sm text-gray-400">
-          First time here?{' '}
-          <Link href="/signup" className="font-medium text-primary hover:underline">
-            Create an account
-          </Link>
-        </p>
       </div>
     </div>
   );
