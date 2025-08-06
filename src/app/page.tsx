@@ -8,6 +8,7 @@ import About from '@/components/sections/about';
 import Services from '@/components/sections/services';
 import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
+import Events from '@/components/sections/events';
 
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
         <Services />
         <WhyUs />
         <Gallery />
+        <Events />
         <Mixes />
         <Shop />
         <Booking />

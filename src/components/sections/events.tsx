@@ -2,43 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MapPin } from 'lucide-react';
+import { getEvents } from '@/lib/firebase/firestore';
+import { Event } from '@/types/event';
 
-const events = [
-  {
-    title: 'Luv Is Rage 04',
-    posterUrl: 'https://placehold.co/400x500',
-    aiHint: 'event poster design',
-    date: 'Happened 1 week ago',
-    location: 'Westlands, Nairobi, Kenya',
-    venue: 'Alloy Bar & Lounge, Sarit Centre'
-  },
-  {
-    title: 'M.A.A.D CITY NIGHT',
-    posterUrl: 'https://placehold.co/400x500',
-    aiHint: 'hip-hop event poster',
-    date: 'Happened 1 week ago',
-    location: 'Westlands, Mpaka Road, Nairobi, Kenya',
-    venue: 'Nairobi Street Kitchen'
-  },
-  {
-    title: 'Afro Beats Day Party',
-    posterUrl: 'https://placehold.co/400x500',
-    aiHint: 'afro beats poster',
-    date: 'Happened 1 month ago',
-    location: 'Westlands, Nairobi, Kenya',
-    venue: 'Nairobi Street Kitchen'
-  },
-   {
-    title: 'Summer Fest',
-    posterUrl: 'https://placehold.co/400x500',
-    aiHint: 'summer party poster',
-    date: 'Upcoming in 2 weeks',
-    location: 'Seattle, WA',
-    venue: 'Gas Works Park'
-  }
-];
+export default async function Events() {
+  const events: Event[] = await getEvents();
 
-export default function Events() {
   return (
     <section id="events" className="py-16 sm:py-24">
       <div className="container mx-auto px-4">
@@ -55,14 +24,14 @@ export default function Events() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {events.map((event) => (
-            <Link href="#" key={event.title} className="group">
+            <Link href="#" key={event.id} className="group">
                 <div className="relative w-full aspect-[4/5] overflow-hidden rounded-lg mb-3">
                     <Image
                         src={event.posterUrl}
                         alt={`Poster for ${event.title}`}
                         fill
                         className="object-cover rounded-md group-hover:scale-105 transition-transform"
-                        data-ai-hint={event.aiHint}
+                        data-ai-hint={event.aiHint || 'event poster'}
                     />
                 </div>
                 <div className="flex flex-col gap-1">
