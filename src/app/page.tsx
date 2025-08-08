@@ -11,12 +11,9 @@ import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
 import Events from '@/components/sections/events';
 import Blog from '@/components/sections/blog';
-import { getMixes } from '@/lib/firebase/firestore';
 
 
 export default async function Home() {
-  const mixes = await getMixes();
-
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <Header />
@@ -27,7 +24,7 @@ export default async function Home() {
         <WhyUs />
         <Gallery />
         <Events />
-        <Mixes mixes={mixes} />
+        <Mixes />
         <Blog />
         <Shop />
         <Booking />
