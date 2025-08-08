@@ -74,6 +74,18 @@ export default function Mixes({ mixes }: MixesProps) {
             </div>
           ))}
         </div>
+
+        <div className="mt-12">
+            <iframe 
+                width="100%" 
+                height="120" 
+                src="https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed=%2Fchichithedjofficial%2F" 
+                frameBorder="0" 
+                allow="encrypted-media; fullscreen; autoplay; idle-detection; speaker-selection; web-share;"
+                title="Mixcloud Player"
+            ></iframe>
+        </div>
+        
         <hr className="mt-12 border-gray-800" />
       </div>
     </section>
