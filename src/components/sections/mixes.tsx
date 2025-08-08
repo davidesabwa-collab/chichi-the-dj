@@ -58,7 +58,11 @@ export default function Mixes({ mixes }: MixesProps) {
                 </div>
                 <div>
                     <h3 className="font-semibold text-base text-gray-100 group-hover:underline">
-                        <Link href={mix.platformUrl} target="_blank" rel="noopener noreferrer">{mix.title}</Link>
+                        {mix.platformUrl && mix.platformUrl !== '#' ? (
+                            <Link href={mix.platformUrl} target="_blank" rel="noopener noreferrer">{mix.title}</Link>
+                        ) : (
+                            <span>{mix.title}</span>
+                        )}
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                         <PlatformIcon platform={mix.platform} />
