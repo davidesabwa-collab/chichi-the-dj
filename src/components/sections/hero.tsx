@@ -12,7 +12,7 @@ import {
 import Autoplay from "embla-carousel-autoplay"
 
 const carouselImages = [
-  { src: "https://placehold.co/1920x720", alt: "DJ performing", aiHint: "dj performing" },
+  { src: "https://images.unsplash.com/photo-1544785349-c4a5301826fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8ZGp8ZW58MHx8fHwxNzU0NjUyOTM2fDA&ixlib=rb-4.1.0&q=80&w=1080", alt: "DJ performing", aiHint: "dj performing" },
   { src: "https://placehold.co/1920x720", alt: "Arap Trap Art", aiHint: "concert crowd" },
   { src: "https://images.unsplash.com/photo-1618409698966-6caa2b95733a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Graffiti background", aiHint: "graffiti art" },
 ];
