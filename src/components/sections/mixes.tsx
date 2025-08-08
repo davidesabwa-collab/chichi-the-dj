@@ -84,7 +84,7 @@ export default function Mixes({ mixes }: MixesProps) {
                 allow="encrypted-media; fullscreen; autoplay; idle-detection; speaker-selection; web-share;"
                 title="Mixcloud Player"
             ></iframe>
-            <iframe style={{borderRadius: "10px"}} scrolling="no" id="hearthis_at_user_chichi-the-dj" width="100%" height="350" src="https://app.hearthis.at/chichi-the-dj/embed/?hcolor=ba1010&css=&skin=black" frameBorder="0" allowTransparency></iframe>
+            <iframe style={{borderRadius: "10px"}} scrolling="no" id="hearthis_at_user_chichi-the-dj" width="100%" height="350" src="https://app.hearthis.at/chichi-the-dj/embed/?hcolor=ba1010&css=&skin=black" frameBorder="0" allowtransparency="true"></iframe>
         </div>
         
         <hr className="mt-12 border-gray-800" />
