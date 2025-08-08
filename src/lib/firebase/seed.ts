@@ -2,7 +2,7 @@
 // To run this seed script, run `npm run db:seed` in your terminal.
 
 import { db } from './firebase';
-import { collection, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, getDocs, writeBatch, doc } from 'firebase/firestore';
 
 async function seedDatabase() {
     console.log("Starting to seed database...");
@@ -62,7 +62,7 @@ async function seedDatabase() {
             date: '4 days ago',
             views: 0,
             platform: 'HearThisAt',
-            platformUrl: 'https://hearthis.at/chichi-the-dj/',
+            platformUrl: 'https://hearthis.at/chichi-the-dj/eeelatest-afrobeat-mix-2-2024-chichi-the-dj-omah-lay-rema-rugerwizkid-ayra-starrsimi-ckayyemi-alade/',
             audioUrl: '#'
         },
         {
@@ -198,5 +198,3 @@ seedDatabase().then(() => {
 }).catch((e) => {
     console.error("Seeding failed:", e);
 });
-
-    
