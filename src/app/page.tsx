@@ -1,3 +1,4 @@
+
 import Header from '@/components/header';
 import Hero from '@/components/sections/hero';
 import Mixes from '@/components/sections/mixes';
@@ -10,9 +11,12 @@ import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
 import Events from '@/components/sections/events';
 import Blog from '@/components/sections/blog';
+import { getMixes } from '@/lib/firebase/firestore';
 
 
-export default function Home() {
+export default async function Home() {
+  const mixes = await getMixes();
+
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <Header />
@@ -23,7 +27,7 @@ export default function Home() {
         <WhyUs />
         <Gallery />
         <Events />
-        <Mixes />
+        <Mixes mixes={mixes} />
         <Blog />
         <Shop />
         <Booking />

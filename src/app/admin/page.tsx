@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, updateMix, addEvent, getEvents, deleteEvent, updateEvent, addProduct, getProducts, deleteProduct, updateProduct, addBlog, getBlogs, deleteBlog, updateBlog, getBookings, deleteBooking } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, updateMix, addEvent, getEvents, deleteEvent, updateEvent, addProduct, getProducts, deleteProduct, updateProduct, addBlog, getBlogs, deleteBlog, updateBlog, getBookings, deleteBooking, getOrders, deleteOrder, getMessages, deleteMessage } from '@/lib/firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,10 +18,14 @@ import { Event } from '@/types/event';
 import { Product } from '@/types/product';
 import { Blog } from '@/types/blog';
 import { Booking } from '@/types/booking';
+import { Order } from '@/types/order';
+import { Message } from '@/types/message';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -30,7 +34,7 @@ export default function AdminPage() {
   const { toast } = useToast();
 
   const [mixes, setMixes] = useState<Mix[]>([]);
-  const [newMix, setNewMix] = useState({ title: '', coverUrl: '', genre: '', date: '' });
+  const [newMix, setNewMix] = useState<Omit<Mix, 'id' | 'views'>>({ title: '', coverUrl: '', genre: '', date: '', platform: 'Other', platformUrl: '', audioUrl: '' });
   const [editingMix, setEditingMix] = useState<Mix | null>(null);
 
   const [events, setEvents] = useState<Event[]>([]);
@@ -38,7 +42,7 @@ export default function AdminPage() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   
   const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' });
+  const [newProduct, setNewProduct] = useState({ name: '', price: 0, imageUrl: '', hoverImageUrl: '', aiHint: '' });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -46,6 +50,8 @@ export default function AdminPage() {
   const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
 
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -69,6 +75,8 @@ export default function AdminPage() {
     fetchProducts();
     fetchBlogs();
     fetchBookings();
+    fetchOrders();
+    fetchMessages();
   };
 
   const fetchMixes = async () => setMixes(await getMixes());
@@ -76,6 +84,9 @@ export default function AdminPage() {
   const fetchProducts = async () => setProducts(await getProducts());
   const fetchBlogs = async () => setBlogs(await getBlogs());
   const fetchBookings = async () => setBookings(await getBookings());
+  const fetchOrders = async () => setOrders(await getOrders());
+  const fetchMessages = async () => setMessages(await getMessages());
+
 
   const handleSignOut = async () => {
     try {
@@ -87,7 +98,6 @@ export default function AdminPage() {
     }
   };
 
-  // Generic handle add
   const handleAdd = async (e: React.FormEvent, addFunc: (data: any) => Promise<any>, data: any, resetState: () => void, fetchFunc: () => void, itemName: string) => {
     e.preventDefault();
     if (Object.values(data).some(val => val === '')) {
@@ -104,7 +114,6 @@ export default function AdminPage() {
     }
   };
 
-  // Generic handle delete
   const handleDelete = async (id: string, deleteFunc: (id: string) => Promise<void>, fetchFunc: () => void, itemName: string) => {
     try {
       await deleteFunc(id);
@@ -115,7 +124,6 @@ export default function AdminPage() {
     }
   };
 
-  // Generic handle update
   const handleUpdate = async (e: React.FormEvent, updateFunc: (id: string, data: any) => Promise<void>, item: any, setEditingItem: (item: any) => void, fetchFunc: () => void, itemName: string) => {
     e.preventDefault();
     if (!item || !item.id) return;
@@ -134,7 +142,7 @@ export default function AdminPage() {
     return <div className="flex min-h-screen items-center justify-center bg-black"><p className="text-white">Loading...</p></div>;
   }
   
-  const renderEditDialog = (item: any, setItem: (item: any) => void, fields: {key: string, label: string, type?: string}[], handleSubmit: (e: React.FormEvent) => void, title: string) => (
+  const renderEditDialog = (item: any, setItem: (item: any) => void, fields: {key: string, label: string, type?: string, options?: string[]}[], handleSubmit: (e: React.FormEvent) => void, title: string) => (
     <Dialog open={isDialogOpen && item} onOpenChange={(open) => !open && setIsDialogOpen(false)}>
       <DialogContent className="bg-gray-900 border-gray-700 text-white">
         <DialogHeader>
@@ -146,8 +154,17 @@ export default function AdminPage() {
               <Label htmlFor={`edit-${field.key}`}>{field.label}</Label>
               {field.type === 'textarea' ? (
                  <Textarea id={`edit-${field.key}`} value={item?.[field.key] || ''} onChange={(e) => setItem({...item, [field.key]: e.target.value})} className="bg-gray-800 border-gray-700" />
+              ) : field.type === 'select' ? (
+                <Select value={item?.[field.key] || ''} onValueChange={(value) => setItem({...item, [field.key]: value})}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700">
+                    <SelectValue placeholder={`Select a ${field.label}`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {field.options?.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               ) : (
-                <Input id={`edit-${field.key}`} value={item?.[field.key] || ''} onChange={(e) => setItem({...item, [field.key]: e.target.value})} className="bg-gray-800 border-gray-700" />
+                <Input id={`edit-${field.key}`} type={field.type || 'text'} value={item?.[field.key] || ''} onChange={(e) => setItem({...item, [field.key]: e.target.value})} className="bg-gray-800 border-gray-700" />
               )}
             </div>
           ))}
@@ -170,7 +187,56 @@ export default function AdminPage() {
         </div>
 
         <div className="bg-gray-900/50 p-8 rounded-lg space-y-12">
-          
+           {/* Manage Messages */}
+           <div id="manage-messages">
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Messages</h2>
+            <div className="space-y-4">
+              {messages.length > 0 ? messages.map(message => (
+                <Card key={message.id} className="bg-gray-800 border-gray-700">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xl">{message.subject}</CardTitle>
+                    <Button variant="destructive" size="sm" onClick={() => message.id && handleDelete(message.id, deleteMessage, fetchMessages, 'Message')}>Delete</Button>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                     <p><strong className="text-gray-400">From:</strong> {message.name} ({message.email})</p>
+                     <p>{message.message}</p>
+                  </CardContent>
+                </Card>
+              )) : (
+                 <p className="text-gray-500">No messages yet.</p>
+              )}
+            </div>
+          </div>
+          <Separator className="bg-gray-700"/>
+
+          {/* Manage Orders */}
+          <div id="manage-orders">
+            <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Orders</h2>
+            <div className="space-y-4">
+              {orders.length > 0 ? orders.map(order => (
+                <Card key={order.id} className="bg-gray-800 border-gray-700">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg">Order from {order.customerName}</CardTitle>
+                    <Button variant="destructive" size="sm" onClick={() => order.id && handleDelete(order.id, deleteOrder, fetchOrders, 'Order')}>Delete</Button>
+                  </CardHeader>
+                  <CardContent>
+                    <p><strong className="text-gray-400">Email:</strong> {order.customerEmail}</p>
+                    <p><strong className="text-gray-400">Address:</strong> {order.shippingAddress}</p>
+                    <p><strong className="text-gray-400">Total:</strong> ${order.totalAmount.toFixed(2)}</p>
+                    <Separator className="my-4 bg-gray-700" />
+                    <h4 className="font-semibold mb-2">Items:</h4>
+                    <ul className="list-disc pl-5 text-gray-400">
+                      {order.items.map(item => <li key={item.id}>{item.name} x {item.quantity}</li>)}
+                    </ul>
+                  </CardContent>
+                </Card>
+              )) : (
+                <p className="text-gray-500">No orders yet.</p>
+              )}
+            </div>
+          </div>
+          <Separator className="bg-gray-700"/>
+
           {/* Manage Bookings */}
           <div id="manage-bookings">
             <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Bookings</h2>
@@ -184,7 +250,7 @@ export default function AdminPage() {
                   <CardContent className="grid md:grid-cols-2 gap-x-8 gap-y-4">
                     <p><strong className="text-gray-400">Name:</strong> {booking.name}</p>
                     <p><strong className="text-gray-400">Email:</strong> {booking.email}</p>
-                    <p><strong className="text-gray-400">Date:</strong> {format(new Date(booking.date), "PPP")}</p>
+                    <p><strong className="text-gray-400">Date:</strong> {format(booking.date, "PPP")}</p>
                     <p><strong className="text-gray-400">Location:</strong> {booking.location}</p>
                     {booking.budget && <p><strong className="text-gray-400">Budget:</strong> {booking.budget}</p>}
                   </CardContent>
@@ -202,11 +268,23 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                   <h3 className="text-xl font-bold mb-4">Add a New Mix</h3>
-                  <form onSubmit={(e) => handleAdd(e, addMix, newMix, () => setNewMix({ title: '', coverUrl: '', genre: '', date: '' }), fetchMixes, 'Mix')} className="space-y-4">
+                  <form onSubmit={(e) => handleAdd(e, addMix, newMix, () => setNewMix({ title: '', coverUrl: '', genre: '', date: '', platform: 'Other', platformUrl: '', audioUrl: '' }), fetchMixes, 'Mix')} className="space-y-4">
                       <Input value={newMix.title} onChange={(e) => setNewMix({...newMix, title: e.target.value})} placeholder="Title" className="bg-gray-800 border-gray-700" />
                       <Input value={newMix.coverUrl} onChange={(e) => setNewMix({...newMix, coverUrl: e.target.value})} placeholder="Cover URL" className="bg-gray-800 border-gray-700" />
                       <Input value={newMix.genre} onChange={(e) => setNewMix({...newMix, genre: e.target.value})} placeholder="Genre" className="bg-gray-800 border-gray-700" />
-                      <Input value={newMix.date} onChange={(e) => setNewMix({...newMix, date: e.target.value})} placeholder="Date" className="bg-gray-800 border-gray-700" />
+                      <Input value={newMix.date} onChange={(e) => setNewMix({...newMix, date: e.target.value})} placeholder="Date (e.g., 1 month ago)" className="bg-gray-800 border-gray-700" />
+                      <Select value={newMix.platform} onValueChange={(value: Mix['platform']) => setNewMix({...newMix, platform: value})}>
+                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Select Platform" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="YouTube">YouTube</SelectItem>
+                          <SelectItem value="Mixcloud">Mixcloud</SelectItem>
+                          <SelectItem value="Audiomack">Audiomack</SelectItem>
+                          <SelectItem value="HearThisAt">HearThisAt</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input value={newMix.platformUrl} onChange={(e) => setNewMix({...newMix, platformUrl: e.target.value})} placeholder="Platform URL" className="bg-gray-800 border-gray-700" />
+                      <Input value={newMix.audioUrl} onChange={(e) => setNewMix({...newMix, audioUrl: e.target.value})} placeholder="Audio File URL" className="bg-gray-800 border-gray-700" />
                       <Button type="submit" className="w-full">Add Mix</Button>
                   </form>
               </div>
@@ -268,9 +346,9 @@ export default function AdminPage() {
             <div className="grid md:grid-cols-2 gap-8">
                 <div>
                     <h3 className="text-xl font-bold mb-4">Add a New Product</h3>
-                    <form onSubmit={(e) => handleAdd(e, addProduct, newProduct, () => setNewProduct({ name: '', price: '', imageUrl: '', hoverImageUrl: '', aiHint: '' }), fetchProducts, 'Product')} className="space-y-4">
+                    <form onSubmit={(e) => handleAdd(e, addProduct, newProduct, () => setNewProduct({ name: '', price: 0, imageUrl: '', hoverImageUrl: '', aiHint: '' }), fetchProducts, 'Product')} className="space-y-4">
                         <Input value={newProduct.name} onChange={(e) => setNewProduct({...newProduct, name: e.target.value})} placeholder="Product Name" className="bg-gray-800 border-gray-700" />
-                        <Input value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} placeholder="Price" className="bg-gray-800 border-gray-700" />
+                        <Input type="number" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value) || 0})} placeholder="Price" className="bg-gray-800 border-gray-700" />
                         <Input value={newProduct.imageUrl} onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})} placeholder="Image URL" className="bg-gray-800 border-gray-700" />
                         <Input value={newProduct.hoverImageUrl} onChange={(e) => setNewProduct({...newProduct, hoverImageUrl: e.target.value})} placeholder="Hover Image URL (Optional)" className="bg-gray-800 border-gray-700" />
                         <Input value={newProduct.aiHint} onChange={(e) => setNewProduct({...newProduct, aiHint: e.target.value})} placeholder="AI Hint" className="bg-gray-800 border-gray-700" />
@@ -306,7 +384,7 @@ export default function AdminPage() {
                         <Textarea value={newBlog.content} onChange={(e) => setNewBlog({...newBlog, content: e.target.value})} placeholder="Content" className="bg-gray-800 border-gray-700" />
                         <Input value={newBlog.thumbnailUrl} onChange={(e) => setNewBlog({...newBlog, thumbnailUrl: e.target.value})} placeholder="Thumbnail URL" className="bg-gray-800 border-gray-700" />
                         <Input value={newBlog.aiHint} onChange={(e) => setNewBlog({...newBlog, aiHint: e.target.value})} placeholder="AI Hint" className="bg-gray-800 border-gray-700" />
-                        <Input value={newBlog.date} onChange={(e) => setNewBlog({...newBlog, date: e.target.value})} placeholder="Date" className="bg-gray-800 border-gray-700" />
+                        <Input type="date" value={newBlog.date} onChange={(e) => setNewBlog({...newBlog, date: e.target.value})} placeholder="Date" className="bg-gray-800 border-gray-700" />
                         <Button type="submit" className="w-full">Add Blog Post</Button>
                     </form>
                 </div>
@@ -331,7 +409,9 @@ export default function AdminPage() {
       <Footer />
       
       {renderEditDialog(editingMix, setEditingMix, [
-          { key: 'title', label: 'Title' }, { key: 'coverUrl', label: 'Cover URL' }, { key: 'genre', label: 'Genre' }, { key: 'date', label: 'Date' }
+          { key: 'title', label: 'Title' }, { key: 'coverUrl', label: 'Cover URL' }, { key: 'genre', label: 'Genre' }, { key: 'date', label: 'Date' },
+          { key: 'platform', label: 'Platform', type: 'select', options: ['YouTube', 'Mixcloud', 'Audiomack', 'HearThisAt', 'Other']},
+          { key: 'platformUrl', label: 'Platform URL' }, { key: 'audioUrl', label: 'Audio File URL' }
       ], (e) => handleUpdate(e, updateMix, editingMix, setEditingMix, fetchMixes, 'Mix'), 'Mix')}
 
       {renderEditDialog(editingEvent, setEditingEvent, [
@@ -339,14 +419,12 @@ export default function AdminPage() {
       ], (e) => handleUpdate(e, updateEvent, editingEvent, setEditingEvent, fetchEvents, 'Event'), 'Event')}
       
       {renderEditDialog(editingProduct, setEditingProduct, [
-          { key: 'name', label: 'Name' }, { key: 'price', label: 'Price' }, { key: 'imageUrl', label: 'Image URL' }, { key: 'hoverImageUrl', label: 'Hover Image URL' }, { key: 'aiHint', label: 'AI Hint' }
+          { key: 'name', label: 'Name' }, { key: 'price', label: 'Price', type: 'number' }, { key: 'imageUrl', label: 'Image URL' }, { key: 'hoverImageUrl', label: 'Hover Image URL' }, { key: 'aiHint', label: 'AI Hint' }
       ], (e) => handleUpdate(e, updateProduct, editingProduct, setEditingProduct, fetchProducts, 'Product'), 'Product')}
 
       {renderEditDialog(editingBlog, setEditingBlog, [
-          { key: 'title', label: 'Title' }, { key: 'content', label: 'Content', type: 'textarea' }, { key: 'thumbnailUrl', label: 'Thumbnail URL' }, { key: 'aiHint', label: 'AI Hint' }, { key: 'date', label: 'Date' }
+          { key: 'title', label: 'Title' }, { key: 'content', label: 'Content', type: 'textarea' }, { key: 'thumbnailUrl', label: 'Thumbnail URL' }, { key: 'aiHint', label: 'AI Hint' }, { key: 'date', label: 'Date', type: 'date' }
       ], (e) => handleUpdate(e, updateBlog, editingBlog, setEditingBlog, fetchBlogs, 'Blog'), 'Blog Post')}
     </div>
   );
 }
-
-    

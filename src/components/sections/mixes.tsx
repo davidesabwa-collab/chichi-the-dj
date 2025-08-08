@@ -1,12 +1,31 @@
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { getMixes } from '@/lib/firebase/firestore';
-import { Mix } from '@/types/mix';
+import type { Mix } from '@/types/mix';
+import { useMusicPlayer } from '@/context/music-player-context';
+import { PlayCircle, Youtube, Disc } from 'lucide-react';
 
-export default async function Mixes() {
-  const mixes: Mix[] = await getMixes();
+interface MixesProps {
+  mixes: Mix[];
+}
+
+const PlatformIcon = ({ platform }: { platform: Mix['platform']}) => {
+    switch (platform) {
+        case 'YouTube':
+            return <Youtube className="h-4 w-4" />;
+        case 'Mixcloud':
+            return <Disc className="h-4 w-4" />; // Using Disc as a placeholder
+        default:
+            return <Disc className="h-4 w-4" />;
+    }
+}
+
+
+export default function Mixes({ mixes }: MixesProps) {
+  const { playMix } = useMusicPlayer();
 
   return (
     <section id="mixes" className="py-16 sm:py-24">
@@ -15,17 +34,17 @@ export default async function Mixes() {
             <h2 className="text-4xl sm:text-5xl font-bold text-white">
                 Mixes
             </h2>
-            <p className="mt-2 text-gray-400">Experience ad-free and high quality mixes. <br />
-                <Link href="#" className="text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors">
-                    Check out mixes
-                </Link>
+            <p className="mt-2 text-gray-400">Experience ad-free and high quality mixes.
             </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {mixes.map((mix) => (
-            <Link href="#" key={mix.id} className="group">
-                <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-2">
+            <div key={mix.id} className="group">
+                <div 
+                    className="relative w-full aspect-video overflow-hidden rounded-lg mb-2 cursor-pointer"
+                    onClick={() => mix.audioUrl && playMix(mix)}
+                >
                     <Image
                         src={mix.coverUrl}
                         alt={`Cover for ${mix.title}`}
@@ -33,23 +52,24 @@ export default async function Mixes() {
                         className="object-cover rounded-md group-hover:opacity-80 transition-opacity"
                         data-ai-hint={`${mix.genre} music abstract`}
                     />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <PlayCircle className="h-12 w-12 text-white" />
+                    </div>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-base text-gray-100 group-hover:underline">{mix.title}</h3>
-                    <p className="text-xs text-gray-500">
-                        {mix.genre} &middot; {mix.date} &middot; {mix.views} views
-                    </p>
+                    <h3 className="font-semibold text-base text-gray-100 group-hover:underline">
+                        <Link href={mix.platformUrl} target="_blank" rel="noopener noreferrer">{mix.title}</Link>
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                        <PlatformIcon platform={mix.platform} />
+                        <span>{mix.genre}</span>
+                        <span>&middot;</span>
+                        <span>{mix.date}</span>
+                    </div>
                 </div>
-            </Link>
+            </div>
           ))}
         </div>
-        {mixes.length > 4 && (
-            <div className="mt-12">
-                <Button variant="link" className="text-white p-0 h-auto text-lg hover:no-underline hover:text-gray-300">
-                    Load More Mixes
-                </Button>
-            </div>
-        )}
         <hr className="mt-12 border-gray-800" />
       </div>
     </section>

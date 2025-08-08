@@ -6,4 +6,7 @@ export interface Mix {
     genre: string;
     date: string;
     views: number;
+    platform: 'YouTube' | 'Mixcloud' | 'Audiomack' | 'HearThisAt' | 'Other';
+    platformUrl: string;
+    audioUrl: string;
 }
