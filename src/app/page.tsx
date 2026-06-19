@@ -1,30 +1,38 @@
 
 import Header from '@/components/header';
 import Hero from '@/components/sections/hero';
-import Mixes from '@/components/sections/mixes';
-import Shop from '@/components/sections/shop';
-import Booking from '@/components/sections/booking';
-import Footer from '@/components/footer';
+import Stats from '@/components/sections/stats';
 import About from '@/components/sections/about';
 import Services from '@/components/sections/services';
 import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
+import MoreFeatures from '@/components/sections/more-features';
 import Events from '@/components/sections/events';
+import MixesSection from '@/components/sections/mixes';
+import Testimonials from '@/components/sections/testimonials';
 import Blog from '@/components/sections/blog';
-
+import Shop from '@/components/sections/shop';
+import Booking from '@/components/sections/booking';
+import Footer from '@/components/footer';
+import { getMixes } from '@/lib/firebase/firestore';
 
 export default async function Home() {
+  const mixes = await getMixes();
+
   return (
     <div className="flex flex-col min-h-screen bg-black">
       <Header />
       <main className="flex-1">
         <Hero />
+        <Stats />
         <About />
         <Services />
         <WhyUs />
         <Gallery />
+        <MoreFeatures />
         <Events />
-        <Mixes />
+        <MixesSection mixes={mixes} />
+        <Testimonials />
         <Blog />
         <Shop />
         <Booking />

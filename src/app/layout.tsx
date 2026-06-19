@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { MusicPlayerProvider } from '@/context/music-player-context';
+import MusicPlayer from '@/components/music-player';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' });
@@ -89,6 +90,7 @@ export default function RootLayout({
         />
         <MusicPlayerProvider>
           {children}
+          <MusicPlayer />
           <Toaster />
         </MusicPlayerProvider>
       </body>

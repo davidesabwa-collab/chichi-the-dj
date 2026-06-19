@@ -9,6 +9,7 @@ interface MusicPlayerContextType {
   isPlaying: boolean;
   playMix: (mix: Mix) => void;
   togglePlayPause: () => void;
+  dismissPlayer: () => void;
 }
 
 const MusicPlayerContext = createContext<MusicPlayerContextType | undefined>(undefined);
@@ -18,23 +19,25 @@ export const MusicPlayerProvider = ({ children }: { children: ReactNode }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const playMix = (mix: Mix) => {
-    // If it's the same mix, just toggle play/pause
     if (currentMix?.id === mix.id) {
-        togglePlayPause();
-    } else { // Otherwise, play the new mix
-        setCurrentMix(mix);
-        setIsPlaying(true);
+      togglePlayPause();
+    } else {
+      setCurrentMix(mix);
+      setIsPlaying(true);
     }
   };
 
   const togglePlayPause = () => {
-    if (currentMix) {
-      setIsPlaying(!isPlaying);
-    }
+    if (currentMix) setIsPlaying(!isPlaying);
+  };
+
+  const dismissPlayer = () => {
+    setCurrentMix(null);
+    setIsPlaying(false);
   };
 
   return (
-    <MusicPlayerContext.Provider value={{ currentMix, isPlaying, playMix, togglePlayPause }}>
+    <MusicPlayerContext.Provider value={{ currentMix, isPlaying, playMix, togglePlayPause, dismissPlayer }}>
       {children}
     </MusicPlayerContext.Provider>
   );
