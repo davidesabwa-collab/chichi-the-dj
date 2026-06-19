@@ -7,12 +7,26 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 
 type BlogPageProps = {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 };
+
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+  const blog = await getBlog(params.id);
+  if (!blog) return { title: 'Post Not Found' };
+  const excerpt = blog.content?.slice(0, 160).replace(/\n/g, ' ');
+  return {
+    title: blog.title,
+    description: excerpt,
+    openGraph: {
+      title: `${blog.title} | Chichi The DJ Blog`,
+      description: excerpt,
+      images: blog.thumbnailUrl ? [{ url: blog.thumbnailUrl }] : [],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const blogs = await getBlogs();

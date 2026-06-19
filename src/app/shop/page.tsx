@@ -1,5 +1,15 @@
-
+import type { Metadata } from 'next';
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+    title: 'Shop',
+    description: 'Official Chichi The DJ merchandise — urban, modern, and fresh apparel and accessories. Show your support with exclusive gear.',
+    openGraph: {
+        title: 'Shop | Chichi The DJ Official',
+        description: 'Official Chichi The DJ merchandise — exclusive urban apparel and accessories.',
+        url: 'https://www.chichithedj.us/shop',
+    },
+};
 import Link from 'next/link';
 import { getProducts } from '@/lib/firebase/firestore';
 import { Product } from '@/types/product';

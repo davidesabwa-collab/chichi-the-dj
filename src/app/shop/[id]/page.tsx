@@ -8,12 +8,25 @@ import Footer from '@/components/footer';
 import Link from 'next/link';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 type ProductPageProps = {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 };
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const product = await getProduct(params.id);
+  if (!product) return { title: 'Product Not Found' };
+  return {
+    title: product.name,
+    description: `Buy ${product.name} — official Chichi The DJ merchandise. ${product.price}. High-quality exclusive gear.`,
+    openGraph: {
+      title: `${product.name} | Chichi The DJ Shop`,
+      description: `Official Chichi The DJ merch: ${product.name} — ${product.price}.`,
+      images: product.imageUrl ? [{ url: product.imageUrl }] : [],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const products = await getProducts();

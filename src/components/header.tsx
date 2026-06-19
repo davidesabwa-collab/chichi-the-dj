@@ -14,14 +14,14 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import Image from "next/image";
 
 const navLinks = [
-  { name: "About", href: "/#about" },
-  { name: "Services", href: "/#services" },
+  { name: "About", href: "/about" },
+  { name: "Services", href: "/services" },
   { name: "Mixes", href: "/mixes" },
+  { name: "Events", href: "/events" },
   { name: "Shop", href: "/shop" },
   { name: "Blog", href: "/blog" },
-  { name: "Events", href: "/events" },
-  { name: "Gallery", href: "/#gallery" },
-  { name: "Contact", href: "/#booking" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "FAQ", href: "/faq" },
 ];
 
 export default function Header() {
@@ -48,7 +48,7 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
              <Button asChild variant="default" size="sm" className="hidden lg:inline-flex rounded-full uppercase tracking-widest font-bold">
-                <Link href="/#booking">
+                <Link href="/contact">
                   Book Now
                 </Link>
             </Button>
@@ -77,7 +77,7 @@ export default function Header() {
                         </div>
                          <div className="mt-8">
                             <Button asChild variant="default" size="lg" className="w-full rounded-md uppercase tracking-widest font-bold">
-                               <Link href="/#booking">
+                               <Link href="/contact">
                                  Book Now
                                </Link>
                             </Button>

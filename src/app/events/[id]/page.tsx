@@ -8,12 +8,25 @@ import Footer from '@/components/footer';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 type EventPageProps = {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 };
+
+export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+  const event = await getEvent(params.id);
+  if (!event) return { title: 'Event Not Found' };
+  return {
+    title: event.title,
+    description: `Chichi The DJ performing at ${event.title} — ${event.venue}, ${event.location} on ${event.date}.`,
+    openGraph: {
+      title: `${event.title} | Chichi The DJ`,
+      description: `Join Chichi The DJ at ${event.title}, ${event.venue}.`,
+      images: event.posterUrl ? [{ url: event.posterUrl }] : [],
+    },
+  };
+}
 
 export async function generateStaticParams() {
   const events = await getEvents();

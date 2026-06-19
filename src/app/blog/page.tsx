@@ -1,5 +1,15 @@
-
+import type { Metadata } from 'next';
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+    title: 'Blog',
+    description: 'Music news, album reviews, DJ insights, and event recaps from Chichi The DJ. Stay in the loop with the latest from Seattle\'s premier DJ.',
+    openGraph: {
+        title: 'Blog | Chichi The DJ Official',
+        description: 'Music news, album reviews, and exclusive insights from Chichi The DJ.',
+        url: 'https://www.chichithedj.us/blog',
+    },
+};
 import Link from 'next/link';
 import { getBlogs } from '@/lib/firebase/firestore';
 import { Blog } from '@/types/blog';

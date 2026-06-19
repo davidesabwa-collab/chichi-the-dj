@@ -1,5 +1,15 @@
-
+import type { Metadata } from 'next';
 import Image from 'next/image';
+
+export const metadata: Metadata = {
+    title: 'Events',
+    description: 'Browse past and upcoming events where Chichi The DJ is performing. Weddings, corporate parties, graduations, and more across Seattle, WA.',
+    openGraph: {
+        title: 'Events | Chichi The DJ Official',
+        description: 'Past and upcoming events by Chichi The DJ in Seattle, WA.',
+        url: 'https://www.chichithedj.us/events',
+    },
+};
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MapPin } from 'lucide-react';
