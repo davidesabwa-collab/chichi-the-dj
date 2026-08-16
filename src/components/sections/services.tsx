@@ -96,7 +96,7 @@ export default function Services() {
                         <h3 className="text-2xl font-bold text-white mb-2">Special Offer: Kids Birthday DJ Services</h3>
                         <p className="text-gray-400 mb-4">Make your kid's birthday an unforgettable one with an experienced DJ. Unlimited hours of fun, games, and music!</p>
                         <div className="flex items-baseline gap-4">
-                            <span className="text-4xl font-bold text-primary">$600</span>
+                            <span className="text-4xl font-bold text-primary">$800</span>
                             <span className="text-gray-400">for unlimited hours</span>
                         </div>
                     </div>

@@ -3,8 +3,9 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { BookingForm } from '@/components/booking-form';
 import { getEvents } from '@/lib/firebase/firestore';
-import { Mail, Phone, MapPin, MessageCircle, Info, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, MessageCircle, Info, Clock, ShoppingBag, IdCard } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
     title: 'Contact & Booking',
@@ -92,15 +93,61 @@ export default async function ContactPage() {
                                     </div>
                                     <div>
                                         <p className="text-white font-semibold text-sm uppercase tracking-wider mb-2">WhatsApp</p>
-                                        <Link
-                                            href="https://wa.me/13609953309"
+                                        <div className="flex flex-wrap gap-2">
+                                            <Link
+                                                href="https://wa.me/13609953309"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-500 transition-colors"
+                                            >
+                                                <MessageCircle className="h-4 w-4" />
+                                                Chat on WhatsApp
+                                            </Link>
+                                            <Link
+                                                href="https://wa.me/c/13609953309"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-700/80 text-white text-sm font-semibold hover:bg-green-600 transition-colors"
+                                            >
+                                                <ShoppingBag className="h-4 w-4" />
+                                                View Catalog
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Digital contact card */}
+                                <div className="flex items-start gap-4">
+                                    <div className="bg-primary/10 p-3 rounded-full flex-shrink-0">
+                                        <IdCard className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div>
+                                            <p className="text-white font-semibold text-sm uppercase tracking-wider mb-2">Digital Contact Card</p>
+                                            <Link
+                                                href="https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors"
+                                            >
+                                                <IdCard className="h-4 w-4" />
+                                                Save My Contact
+                                            </Link>
+                                        </div>
+                                        <a
+                                            href="https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-500 transition-colors"
+                                            className="flex-shrink-0"
                                         >
-                                            <MessageCircle className="h-4 w-4" />
-                                            Chat on WhatsApp
-                                        </Link>
+                                            <Image
+                                                src="/chichi-contact-qr.jpg"
+                                                alt="Scan to save Chichi The DJ's contact information"
+                                                width={88}
+                                                height={88}
+                                                className="rounded-md border border-gray-800"
+                                            />
+                                        </a>
                                     </div>
                                 </div>
 
@@ -121,6 +168,7 @@ export default async function ContactPage() {
                                             { label: 'Facebook', href: 'https://www.facebook.com/chichithedjofficial/' },
                                             { label: 'Instagram', href: 'https://www.instagram.com/chichithedjofficial/' },
                                             { label: 'TikTok', href: 'https://www.tiktok.com/@chichithedj' },
+                                            { label: 'Snapchat', href: 'https://snapchat.com/t/KpqWfo23' },
                                         ].map((s) => (
                                             <Link key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                                                 className="text-xs border border-gray-700 text-gray-400 px-3 py-1.5 rounded-full hover:border-primary hover:text-primary transition-colors">

@@ -74,7 +74,7 @@ const faqs = [
         items: [
             {
                 q: 'How much does Chichi The DJ cost?',
-                a: 'Pricing depends on the event type, duration, location, and specific requirements. Fill out our booking form to receive a customized quote. Kids Birthday DJ packages start at $600 for unlimited hours.',
+                a: 'Pricing depends on the event type, duration, location, and specific requirements. Fill out our booking form to receive a customized quote. Kids Birthday DJ packages start at $800 for unlimited hours.',
             },
             {
                 q: 'Do you offer packages?',

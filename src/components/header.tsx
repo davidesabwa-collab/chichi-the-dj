@@ -29,8 +29,8 @@ export default function Header() {
     <header className="fixed top-0 z-50 w-full bg-black/80 backdrop-blur-sm text-white border-b border-gray-800">
       <div className="container flex h-20 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Image 
-            src="/chichithedjlogo.png" 
+          <Image
+            src="/chichithedjlogo.jpg"
             alt="Chichi The DJ Logo"
             width={48} 
             height={48}

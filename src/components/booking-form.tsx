@@ -134,9 +134,13 @@ export function BookingForm({ events }: BookingFormProps) {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="wedding">Wedding</SelectItem>
+                  <SelectItem value="pre-wedding">Pre-wedding (Ruracio)</SelectItem>
                   <SelectItem value="corporate">Corporate Event</SelectItem>
                   <SelectItem value="private">Private Party</SelectItem>
                   <SelectItem value="graduation">Graduation Party</SelectItem>
+                  <SelectItem value="child-naming">Child Naming</SelectItem>
+                  <SelectItem value="house-party">House Party</SelectItem>
+                  <SelectItem value="pool-party">Pool Party</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>

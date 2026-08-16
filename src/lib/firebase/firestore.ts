@@ -6,6 +6,8 @@ import { Event } from '@/types/event';
 import { Product } from '@/types/product';
 import { Blog } from '@/types/blog';
 import { Booking } from '@/types/booking';
+import { Order } from '@/types/order';
+import { Message } from '@/types/message';
 
 // Generic function to get a single document by ID
 const getDocument = async <T>(collectionName: string, id: string): Promise<T | null> => {
@@ -88,5 +90,17 @@ export const getBookings = async (): Promise<Booking[]> => {
   });
 };
 export const deleteBooking = async (id: string) => deleteDoc(doc(db, 'bookings', id));
+
+// --- Orders ---
+const ordersCollection = collection(db, 'orders');
+export const addOrder = async (orderData: Omit<Order, 'id'>) => addDoc(ordersCollection, orderData);
+export const getOrders = async (): Promise<Order[]> => (await getDocs(ordersCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Order));
+export const deleteOrder = async (id: string) => deleteDoc(doc(db, 'orders', id));
+
+// --- Messages ---
+const messagesCollection = collection(db, 'messages');
+export const addMessage = async (messageData: Omit<Message, 'id'>) => addDoc(messagesCollection, messageData);
+export const getMessages = async (): Promise<Message[]> => (await getDocs(messagesCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
+export const deleteMessage = async (id: string) => deleteDoc(doc(db, 'messages', id));
 
     

@@ -57,6 +57,9 @@ export const metadata: Metadata = {
   },
   keywords: ['DJ', 'Chichi The DJ', 'Seattle DJ', 'Wedding DJ', 'Corporate Event DJ', 'Party DJ', 'Afrobeat Mix', 'Amapiano Mix', 'Dancehall Mix'],
   creator: 'Chichi The DJ',
+  verification: {
+    google: '7bFShrNF84NlU4xA2utzxAGUSz434IIbIM-b6jnK3To',
+  },
 };
 
 export default function RootLayout({
@@ -74,7 +77,7 @@ export default function RootLayout({
       'https://www.instagram.com/chichithedj',
       'https://www.facebook.com/chichithedj',
     ],
-    logo: `${siteConfig.url}/chichithedjlogo.png`,
+    logo: `${siteConfig.url}/chichithedjlogo.jpg`,
     image: `${siteConfig.url}/chichithedj-og.jpg`,
     description: siteConfig.description,
     genre: ['Afrobeat', 'Amapiano', 'Dancehall', 'Reggae', 'Hip Hop', 'R&B'],

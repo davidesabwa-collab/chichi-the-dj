@@ -47,7 +47,7 @@ export default function LoginPage() {
         <div className="text-center">
            <Link href="/" className="inline-block">
              <Image 
-               src="/chichithedjlogo.png" 
+               src="/chichithedjlogo.jpg"
                alt="Chichi The DJ Logo"
                width={80} 
                height={80}
