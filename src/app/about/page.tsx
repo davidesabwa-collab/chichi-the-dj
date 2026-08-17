@@ -102,7 +102,7 @@ export default async function AboutPage() {
                 </section>
 
                 {/* Stats */}
-                <section className="bg-blue-900 py-12">
+                <section className="bg-[#141a2e] py-12">
                     <div className="container mx-auto px-4">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                             {highlights.map((h) => (
