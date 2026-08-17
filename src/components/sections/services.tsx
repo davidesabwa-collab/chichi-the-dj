@@ -73,8 +73,10 @@ export default async function Services() {
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {services.map((service, i) => (
-                        <div key={`${service.title}-${i}`} className="bg-gray-900 rounded-lg overflow-hidden group">
+                    {services.map((service, i) => {
+                        const isWedding = service.title === 'Weddings';
+                        return (
+                        <div key={`${service.title}-${i}`} className={`bg-gray-900 rounded-lg overflow-hidden group ${isWedding ? 'ring-1 ring-blue-800' : ''}`}>
                             <div className="relative h-48 w-full">
                                 <Image
                                     src={service.imageUrl}
@@ -86,16 +88,19 @@ export default async function Services() {
                             </div>
                             <div className="p-6">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <Sparkles className="h-4 w-4 text-primary" />
-                                    <h3 className="text-xl font-bold text-primary uppercase tracking-wide">{service.title}</h3>
+                                    <Sparkles className={`h-4 w-4 ${isWedding ? 'text-blue-400' : 'text-primary'}`} />
+                                    <h3 className={`text-xl font-bold uppercase tracking-wide ${isWedding ? 'text-blue-400' : 'text-primary'}`}>{service.title}</h3>
                                 </div>
                                 <p className="text-gray-400 text-sm mb-4">{service.description}</p>
-                                <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary hover:text-black transition-colors text-xs uppercase tracking-widest font-bold">
+                                <Button asChild variant="outline" className={isWedding
+                                    ? "border-blue-700 text-blue-400 hover:bg-blue-900 hover:text-white transition-colors text-xs uppercase tracking-widest font-bold"
+                                    : "border-primary text-primary hover:bg-primary hover:text-black transition-colors text-xs uppercase tracking-widest font-bold"}>
                                     <Link href="/#booking">Book Now</Link>
                                 </Button>
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Kids Birthday Special Offer */}

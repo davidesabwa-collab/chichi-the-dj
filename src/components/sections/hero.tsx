@@ -12,8 +12,17 @@ export default async function Hero() {
     const content = (await getSiteContent<HeroContent>('hero')) || defaultContent;
 
   return (
-    <section id="home" className="w-full text-center text-white pt-20">
-      <div className="container mx-auto px-4 py-10 sm:py-20">
+    <section id="home" className="relative w-full text-center text-white pt-20 overflow-hidden">
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/videos/hero-dj.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
+      <div className="absolute inset-0 bg-black/70" />
+      <div className="relative container mx-auto px-4 py-16 sm:py-32">
         <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-6xl font-extrabold text-gray-100">
                 {content.headline || defaultContent.headline}
