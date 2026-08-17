@@ -4,9 +4,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { Mix } from '@/types/mix';
-import type { MixcloudMixItem } from '@/types/site-content';
+import type { MixcloudMixItem, MixesIntroContent } from '@/types/site-content';
 import { PlayCircle, Youtube, Disc, ExternalLink } from 'lucide-react';
 import { useMusicPlayer } from '@/context/music-player-context';
+import HeroCarousel from './hero-carousel';
+
+const defaultMixesIntro: MixesIntroContent = {
+    headline: 'Experience The Beat',
+    subtext: "No ads, no noise, just Chichi The DJ’s best mixes, exclusive tracks, playlists, and more, all in one smooth spot.",
+    images: [
+        { src: "https://images.unsplash.com/photo-1544785349-c4a5301826fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8ZGp8ZW58MHx8fHwxNzU0NjUyOTM2fDA&ixlib=rb-4.1.0&q=80&w=1080", alt: "DJ performing", aiHint: "dj performing" },
+        { src: "https://images.unsplash.com/photo-1651065699236-6a6885503943?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Arap Trap Art", aiHint: "concert crowd" },
+        { src: "https://images.unsplash.com/photo-1618409698966-6caa2b95733a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Graffiti background", aiHint: "graffiti art" },
+    ],
+};
 
 const defaultMixcloudMixes: MixcloudMixItem[] = [
     { title: 'Best Afrobeat Vibes - 2026', duration: '38:55', slug: 'best-afrobeat-vibes-2026' },
@@ -78,17 +89,29 @@ function MixCard({ mix }: { mix: Mix }) {
 interface MixesSectionProps {
     mixes: Mix[];
     mixcloudMixes?: MixcloudMixItem[];
+    mixesIntro?: MixesIntroContent;
 }
 
-export default function MixesSection({ mixes, mixcloudMixes }: MixesSectionProps) {
+export default function MixesSection({ mixes, mixcloudMixes, mixesIntro }: MixesSectionProps) {
     const recentMixes = mixes.slice(0, 8);
     const resolvedMixcloudMixes = mixcloudMixes?.length ? mixcloudMixes : defaultMixcloudMixes;
+    const intro = mixesIntro?.headline ? mixesIntro : defaultMixesIntro;
+    const introImages = intro.images?.length ? intro.images : defaultMixesIntro.images;
 
     return (
         <section id="mixes" className="py-16 sm:py-24">
+            <div className="container mx-auto px-4 text-center">
+                <h2 className="text-4xl md:text-6xl font-extrabold text-gray-100">
+                    {intro.headline}
+                </h2>
+                <p className="mt-4 text-lg max-w-2xl text-gray-300 mx-auto">
+                    {intro.subtext}
+                </p>
+            </div>
+            <HeroCarousel images={introImages} />
             <div className="container mx-auto px-4">
                 {/* HearThis & YouTube Mixes */}
-                <div className="mb-8 text-center">
+                <div className="mt-16 mb-8 text-center">
                     <h2 className="text-4xl sm:text-5xl font-bold text-white uppercase tracking-wider font-space-grotesk">
                         Latest Mixes
                     </h2>

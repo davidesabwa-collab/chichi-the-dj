@@ -93,6 +93,11 @@ export interface ContactDetailItem {
 export interface HeroContent {
     headline: string;
     subtext: string;
+}
+
+export interface MixesIntroContent {
+    headline: string;
+    subtext: string;
     images: ImageItem[];
 }
 
@@ -176,6 +181,7 @@ export interface ContactInfoContent {
     digitalCardUrl: string;
     digitalCardQrUrl: string;
     bookingPolicyText: string;
+    paymentMethods: string[];
 }
 
 export interface FaqContent {

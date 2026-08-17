@@ -25,7 +25,7 @@ const defaultCategories = [
             },
             {
                 q: 'What is your cancellation policy?',
-                a: 'Cancellations made more than 30 days before the event may receive a partial refund of the deposit. Cancellations within 30 days of the event are non-refundable. Please contact us as soon as possible if plans change.',
+                a: 'All deposits and payments are non-refundable. Please contact us as soon as possible if your plans change so we can discuss your options.',
             },
             {
                 q: 'Do you travel outside of Seattle?',
@@ -84,7 +84,7 @@ const defaultCategories = [
             },
             {
                 q: 'Is a deposit required?',
-                a: 'Yes, a deposit is required to secure your date. The remaining balance is due on or before the event date. Payment methods include Zelle, Venmo, Cash App, and cash.',
+                a: 'Yes, a deposit is required to secure your date. The remaining balance is due on or before the event date. Payment methods include Zelle, Venmo, Cash App, and cash. All deposits and payments are non-refundable.',
             },
         ],
     },

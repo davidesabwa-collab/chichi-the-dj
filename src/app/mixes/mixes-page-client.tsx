@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { getMixes } from '@/lib/firebase/firestore';
 import type { Mix } from '@/types/mix';
 import { useMusicPlayer } from '@/context/music-player-context';
-import { PlayCircle, Youtube, Disc, Search } from 'lucide-react';
+import { PlayCircle, Youtube, Disc, Search, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -142,6 +142,37 @@ export default function MixesPageClient({ header, footer }: { header: ReactNode;
                 ))}
               </div>
             )}
+
+            {/* Platform links */}
+            <div className="mt-16 pt-12 border-t border-gray-800 text-center">
+              <p className="text-gray-400 mb-6">Find more mixes on our other platforms</p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  href="https://www.youtube.com/channel/UCrvISDSSEbE4XMWshYQncbQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-700 text-gray-300 hover:border-primary hover:text-primary transition-colors font-semibold uppercase tracking-wider text-sm"
+                >
+                  <Youtube className="h-5 w-5" /> YouTube <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href="https://www.mixcloud.com/chichithedjofficial/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-700 text-gray-300 hover:border-primary hover:text-primary transition-colors font-semibold uppercase tracking-wider text-sm"
+                >
+                  <Disc className="h-5 w-5" /> Mixcloud <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+                <Link
+                  href="https://hearthis.at/chichi-the-dj/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gray-700 text-gray-300 hover:border-primary hover:text-primary transition-colors font-semibold uppercase tracking-wider text-sm"
+                >
+                  <Disc className="h-5 w-5" /> HearThis.at <ExternalLink className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </main>

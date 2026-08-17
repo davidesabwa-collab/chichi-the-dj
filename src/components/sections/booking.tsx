@@ -2,6 +2,7 @@ import { BookingForm } from "@/components/booking-form";
 import { getEvents, getSiteContent } from "@/lib/firebase/firestore";
 import { Mail, Phone, MapPin, MessageCircle, Info } from 'lucide-react';
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import type { ContactInfoContent } from '@/types/site-content';
 
 const defaultContact: ContactInfoContent = {
@@ -12,7 +13,8 @@ const defaultContact: ContactInfoContent = {
   whatsappCatalogUrl: 'https://wa.me/c/13609953309',
   digitalCardUrl: 'https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614',
   digitalCardQrUrl: '/chichi-contact-qr.jpg',
-  bookingPolicyText: 'Reservations are first come, first served upon making a down payment. Your date is not secured until a deposit is received.',
+  bookingPolicyText: 'Reservations are first come, first served upon making a down payment. All deposits and payments are non-refundable.',
+  paymentMethods: ['Zelle', 'Venmo', 'Cash App', 'Cash'],
 };
 
 export default async function Booking() {
@@ -93,8 +95,20 @@ export default async function Booking() {
               </div>
             </div>
 
+            {/* Payment methods */}
+            <div className="mt-8">
+              <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">We Accept</p>
+              <div className="flex flex-wrap gap-2">
+                {(info.paymentMethods?.length ? info.paymentMethods : defaultContact.paymentMethods).map((method) => (
+                  <span key={method} className="text-xs border border-primary/40 text-primary px-3 py-1 rounded-full">
+                    {method}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             {/* Booking policy note */}
-            <div className="mt-8 flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg p-4">
+            <div className="mt-4 flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg p-4">
               <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
               <p className="text-sm text-gray-400">
                 <span className="text-white font-semibold">Booking Policy:</span> {info.bookingPolicyText || defaultContact.bookingPolicyText}
@@ -105,6 +119,11 @@ export default async function Booking() {
           <div className="bg-gray-900 p-8 rounded-lg shadow-lg">
             <h3 className="text-3xl font-bold text-white mb-6">Request a Quote</h3>
             <BookingForm events={events} />
+            <div className="mt-4 text-center">
+              <Button variant="link" size="sm" className="text-gray-500 hover:text-gray-300 text-xs h-auto p-0">
+                Create Account
+              </Button>
+            </div>
           </div>
         </div>
       </div>

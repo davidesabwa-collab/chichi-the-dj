@@ -4,9 +4,7 @@ import Hero from '@/components/sections/hero';
 import Stats from '@/components/sections/stats';
 import About from '@/components/sections/about';
 import Services from '@/components/sections/services';
-import WhyUs from '@/components/sections/why-us';
 import Gallery from '@/components/sections/gallery';
-import MoreFeatures from '@/components/sections/more-features';
 import Events from '@/components/sections/events';
 import MixesSection from '@/components/sections/mixes';
 import Testimonials from '@/components/sections/testimonials';
@@ -15,12 +13,13 @@ import Shop from '@/components/sections/shop';
 import Booking from '@/components/sections/booking';
 import Footer from '@/components/footer';
 import { getMixes, getSiteContent } from '@/lib/firebase/firestore';
-import type { MixcloudMixesContent } from '@/types/site-content';
+import type { MixcloudMixesContent, MixesIntroContent } from '@/types/site-content';
 
 export default async function Home() {
-  const [mixes, mixcloudContent] = await Promise.all([
+  const [mixes, mixcloudContent, mixesIntro] = await Promise.all([
     getMixes(),
     getSiteContent<MixcloudMixesContent>('mixcloud-mixes'),
+    getSiteContent<MixesIntroContent>('mixes-intro'),
   ]);
 
   return (
@@ -31,11 +30,9 @@ export default async function Home() {
         <Stats />
         <About />
         <Services />
-        <WhyUs />
         <Gallery />
-        <MoreFeatures />
         <Events />
-        <MixesSection mixes={mixes} mixcloudMixes={mixcloudContent?.mixes} />
+        <MixesSection mixes={mixes} mixcloudMixes={mixcloudContent?.mixes} mixesIntro={mixesIntro || undefined} />
         <Testimonials />
         <Blog />
         <Shop />

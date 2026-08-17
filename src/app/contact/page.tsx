@@ -6,6 +6,7 @@ import { getEvents, getSiteContent } from '@/lib/firebase/firestore';
 import { Mail, Phone, MapPin, MessageCircle, Info, Clock, ShoppingBag, IdCard } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import type { ContactInfoContent } from '@/types/site-content';
 
 const defaultContact: ContactInfoContent = {
@@ -16,7 +17,8 @@ const defaultContact: ContactInfoContent = {
     whatsappCatalogUrl: 'https://wa.me/c/13609953309',
     digitalCardUrl: 'https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614',
     digitalCardQrUrl: '/chichi-contact-qr.jpg',
-    bookingPolicyText: 'Reservations are first come, first served upon making a down payment. Your date is not secured until a deposit is received.',
+    bookingPolicyText: 'Reservations are first come, first served upon making a down payment. All deposits and payments are non-refundable.',
+    paymentMethods: ['Zelle', 'Venmo', 'Cash App', 'Cash'],
 };
 
 export const metadata: Metadata = {
@@ -168,6 +170,18 @@ export default async function ContactPage() {
                                     </div>
                                 </div>
 
+                                {/* Payment methods */}
+                                <div>
+                                    <p className="text-sm text-gray-500 mb-2 uppercase tracking-wider">We Accept</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(info.paymentMethods?.length ? info.paymentMethods : defaultContact.paymentMethods).map((method) => (
+                                            <span key={method} className="text-xs border border-primary/40 text-primary px-3 py-1 rounded-full">
+                                                {method}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 {/* Booking policy */}
                                 <div className="flex items-start gap-3 bg-primary/5 border border-primary/20 rounded-lg p-4">
                                     <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -182,6 +196,7 @@ export default async function ContactPage() {
                                     <p className="text-sm text-gray-500 mb-3 uppercase tracking-wider">Also reach us on</p>
                                     <div className="flex flex-wrap gap-2">
                                         {[
+                                            { label: 'YouTube', href: 'https://www.youtube.com/channel/UCrvISDSSEbE4XMWshYQncbQ' },
                                             { label: 'Facebook', href: 'https://www.facebook.com/chichithedjofficial/' },
                                             { label: 'Instagram', href: 'https://www.instagram.com/chichithedjofficial/' },
                                             { label: 'TikTok', href: 'https://www.tiktok.com/@chichithedj' },
@@ -200,6 +215,11 @@ export default async function ContactPage() {
                             <div className="lg:col-span-3 bg-gray-900 p-8 rounded-2xl border border-gray-800">
                                 <h2 className="text-2xl font-bold text-white mb-6">Request a Quote</h2>
                                 <BookingForm events={events} />
+                                <div className="mt-4 text-center">
+                                    <Button variant="link" size="sm" className="text-gray-500 hover:text-gray-300 text-xs h-auto p-0">
+                                        Create Account
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>

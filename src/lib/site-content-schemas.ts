@@ -18,7 +18,16 @@ export const SITE_CONTENT_SCHEMAS: SectionSchema[] = [
     {
         key: 'hero',
         label: 'Hero (Homepage Top)',
-        description: 'Headline, subtext, and the image carousel at the top of the homepage.',
+        description: 'Headline and subtext at the very top of the homepage.',
+        fields: [
+            { key: 'headline', label: 'Headline', type: 'text' },
+            { key: 'subtext', label: 'Subtext', type: 'textarea' },
+        ],
+    },
+    {
+        key: 'mixes-intro',
+        label: 'Mixes Section Intro',
+        description: 'Headline, subtext, and image carousel that opens the homepage Mixes section.',
         fields: [
             { key: 'headline', label: 'Headline', type: 'text' },
             { key: 'subtext', label: 'Subtext', type: 'textarea' },
@@ -258,6 +267,7 @@ export const SITE_CONTENT_SCHEMAS: SectionSchema[] = [
             { key: 'digitalCardUrl', label: 'Digital Contact Card Link', type: 'text' },
             { key: 'digitalCardQrUrl', label: 'Digital Contact Card QR Image', type: 'image' },
             { key: 'bookingPolicyText', label: 'Booking Policy Text', type: 'textarea' },
+            { key: 'paymentMethods', label: 'Accepted Payment Methods', type: 'list-text' },
         ],
     },
     {
