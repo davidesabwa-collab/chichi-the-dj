@@ -15,13 +15,13 @@ export default async function Stats() {
     const stats = content.stats?.length ? content.stats : defaultStats.stats;
 
     return (
-        <section className="bg-primary py-12">
+        <section className="bg-blue-600 py-12">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     {stats.map((stat, i) => (
                         <div key={`${stat.label}-${i}`}>
-                            <p className="text-4xl md:text-5xl font-extrabold text-black">{stat.value}</p>
-                            <p className="mt-1 text-sm font-semibold text-black/70 uppercase tracking-widest">{stat.label}</p>
+                            <p className="text-4xl md:text-5xl font-extrabold text-white">{stat.value}</p>
+                            <p className="mt-1 text-sm font-semibold text-white/70 uppercase tracking-widest">{stat.label}</p>
                         </div>
                     ))}
                 </div>

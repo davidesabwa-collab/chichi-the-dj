@@ -1,14 +1,14 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Montserrat, Comfortaa } from 'next/font/google'
 import { MusicPlayerProvider } from '@/context/music-player-context';
 import MusicPlayer from '@/components/music-player';
 import { getSiteContent } from '@/lib/firebase/firestore';
 import type { SiteConfigContent } from '@/types/site-content';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' });
+const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-body' });
+const comfortaa = Comfortaa({ subsets: ['latin'], variable: '--font-heading' });
 
 const SITE_URL = "https://www.chichithedj.us";
 const defaultSiteConfig: SiteConfigContent = {
@@ -96,7 +96,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans antialiased`}>
+      <body className={`${montserrat.variable} ${comfortaa.variable} font-sans antialiased`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

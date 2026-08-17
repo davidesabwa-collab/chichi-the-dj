@@ -102,16 +102,16 @@ export default async function AboutPage() {
                 </section>
 
                 {/* Stats */}
-                <section className="bg-primary py-12">
+                <section className="bg-blue-600 py-12">
                     <div className="container mx-auto px-4">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                             {highlights.map((h) => (
                                 <div key={h.label}>
                                     <div className="flex justify-center mb-2">
-                                        <SiteIcon name={h.icon} className="h-8 w-8 text-black/70" />
+                                        <SiteIcon name={h.icon} className="h-8 w-8 text-white/70" />
                                     </div>
-                                    <p className="text-3xl font-extrabold text-black">{h.label}</p>
-                                    <p className="text-xs font-semibold text-black/60 uppercase tracking-wider mt-1">{h.sub}</p>
+                                    <p className="text-3xl font-extrabold text-white">{h.label}</p>
+                                    <p className="text-xs font-semibold text-white/60 uppercase tracking-wider mt-1">{h.sub}</p>
                                 </div>
                             ))}
                         </div>

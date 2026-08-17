@@ -95,7 +95,7 @@ export default function MixesPageClient({ header, footer }: { header: ReactNode;
         <section id="mixes-list" className="py-24 sm:py-32">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
-              <h1 className="text-5xl sm:text-6xl font-bold text-white uppercase tracking-wider font-space-grotesk">
+              <h1 className="text-5xl sm:text-6xl font-bold text-white uppercase tracking-wider">
                 All Mixes
               </h1>
               <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">

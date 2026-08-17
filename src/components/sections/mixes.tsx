@@ -112,7 +112,7 @@ export default function MixesSection({ mixes, mixcloudMixes, mixesIntro }: Mixes
             <div className="container mx-auto px-4">
                 {/* HearThis & YouTube Mixes */}
                 <div className="mt-16 mb-8 text-center">
-                    <h2 className="text-4xl sm:text-5xl font-bold text-white uppercase tracking-wider font-space-grotesk">
+                    <h2 className="text-4xl sm:text-5xl font-bold text-white uppercase tracking-wider">
                         Latest Mixes
                     </h2>
                     <p className="mt-2 text-gray-400 max-w-2xl mx-auto">
