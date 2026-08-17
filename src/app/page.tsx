@@ -14,10 +14,14 @@ import Blog from '@/components/sections/blog';
 import Shop from '@/components/sections/shop';
 import Booking from '@/components/sections/booking';
 import Footer from '@/components/footer';
-import { getMixes } from '@/lib/firebase/firestore';
+import { getMixes, getSiteContent } from '@/lib/firebase/firestore';
+import type { MixcloudMixesContent } from '@/types/site-content';
 
 export default async function Home() {
-  const mixes = await getMixes();
+  const [mixes, mixcloudContent] = await Promise.all([
+    getMixes(),
+    getSiteContent<MixcloudMixesContent>('mixcloud-mixes'),
+  ]);
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
@@ -31,7 +35,7 @@ export default async function Home() {
         <Gallery />
         <MoreFeatures />
         <Events />
-        <MixesSection mixes={mixes} />
+        <MixesSection mixes={mixes} mixcloudMixes={mixcloudContent?.mixes} />
         <Testimonials />
         <Blog />
         <Shop />

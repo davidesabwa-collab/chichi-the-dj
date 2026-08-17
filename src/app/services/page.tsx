@@ -5,6 +5,8 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Cake, Check } from 'lucide-react';
+import { getSiteContent } from '@/lib/firebase/firestore';
+import type { ServicesPageContent, KidsOfferContent } from '@/types/site-content';
 
 export const metadata: Metadata = {
     title: 'Services',
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
     },
 };
 
-const services = [
+const defaultContent: ServicesPageContent = { services: [
     {
         title: 'Weddings',
         price: 'Custom Quote',
@@ -74,9 +76,17 @@ const services = [
         imageUrl: 'https://images.unsplash.com/photo-1529543544282-ea669407fca3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800',
         aiHint: 'family gathering',
     },
-];
+]};
 
-export default function ServicesPage() {
+const defaultKidsOffer: KidsOfferContent = { price: '$800' };
+
+export default async function ServicesPage() {
+    const [content, kidsOffer] = await Promise.all([
+        getSiteContent<ServicesPageContent>('services-page'),
+        getSiteContent<KidsOfferContent>('kids-offer'),
+    ]);
+    const services = content?.services?.length ? content.services : defaultContent.services;
+    const kidsPrice = kidsOffer?.price || defaultKidsOffer.price;
     return (
         <>
             <Header />
@@ -146,7 +156,7 @@ export default function ServicesPage() {
                                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Kids Birthday DJ — Special Package</h2>
                                 <p className="text-gray-400 mb-4">Make your kid's birthday unforgettable with a DJ who brings unlimited fun, interactive games, and age-perfect music.</p>
                                 <div className="flex items-baseline gap-3 justify-center md:justify-start">
-                                    <span className="text-5xl font-extrabold text-primary">$800</span>
+                                    <span className="text-5xl font-extrabold text-primary">{kidsPrice}</span>
                                     <span className="text-gray-400">for unlimited hours</span>
                                 </div>
                             </div>

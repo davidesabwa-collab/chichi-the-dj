@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import { addMix, getMixes, deleteMix, updateMix, addEvent, getEvents, deleteEvent, updateEvent, addProduct, getProducts, deleteProduct, updateProduct, addBlog, getBlogs, deleteBlog, updateBlog, getBookings, deleteBooking, getOrders, deleteOrder, getMessages, deleteMessage } from '@/lib/firebase/firestore';
+import { addMix, getMixes, deleteMix, updateMix, addEvent, getEvents, deleteEvent, updateEvent, addProduct, getProducts, deleteProduct, updateProduct, addBlog, getBlogs, deleteBlog, updateBlog, getBookings, deleteBooking, getOrders, deleteOrder, getMessages, deleteMessage, getSiteContent, setSiteContent } from '@/lib/firebase/firestore';
+import { SITE_CONTENT_SCHEMAS } from '@/lib/site-content-schemas';
+import { SiteContentForm } from '@/components/admin/site-content-form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -52,7 +54,10 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
-  
+
+  const [siteContent, setSiteContentMap] = useState<Record<string, any>>({});
+  const [editingContentKey, setEditingContentKey] = useState<string | null>(null);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -77,6 +82,7 @@ export default function AdminPage() {
     fetchBookings();
     fetchOrders();
     fetchMessages();
+    fetchSiteContent();
   };
 
   const fetchMixes = async () => setMixes(await getMixes());
@@ -86,6 +92,23 @@ export default function AdminPage() {
   const fetchBookings = async () => setBookings(await getBookings());
   const fetchOrders = async () => setOrders(await getOrders());
   const fetchMessages = async () => setMessages(await getMessages());
+  const fetchSiteContent = async () => {
+    const entries = await Promise.all(
+      SITE_CONTENT_SCHEMAS.map(async (schema) => [schema.key, (await getSiteContent(schema.key)) || {}] as const)
+    );
+    setSiteContentMap(Object.fromEntries(entries));
+  };
+
+  const handleSaveSiteContent = async (key: string, data: Record<string, any>) => {
+    try {
+      await setSiteContent(key, data);
+      toast({ title: 'Content Updated', description: `${SITE_CONTENT_SCHEMAS.find(s => s.key === key)?.label} has been saved.` });
+      setSiteContentMap((prev) => ({ ...prev, [key]: data }));
+      setEditingContentKey(null);
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Failed to Save', description: error.message });
+    }
+  };
 
 
   const handleSignOut = async () => {
@@ -187,6 +210,28 @@ export default function AdminPage() {
         </div>
 
         <div className="bg-gray-900/50 p-8 rounded-lg space-y-12">
+           {/* Manage Site Content */}
+           <div id="manage-site-content">
+            <h2 className="text-2xl font-bold mb-2 border-b border-gray-700 pb-4">Manage Site Content</h2>
+            <p className="text-gray-500 text-sm mb-6">Edit the images and text used across every page — homepage sections, About, Services, Gallery, FAQ, header, footer, and contact info.</p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {SITE_CONTENT_SCHEMAS.map((schema) => (
+                <Card key={schema.key} className="bg-gray-800 border-gray-700 flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{schema.label}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <p className="text-sm text-gray-400">{schema.description}</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setEditingContentKey(schema.key)}>Edit</Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </div>
+          <Separator className="bg-gray-700"/>
+
            {/* Manage Messages */}
            <div id="manage-messages">
             <h2 className="text-2xl font-bold mb-6 border-b border-gray-700 pb-4">Manage Messages</h2>
@@ -425,6 +470,21 @@ export default function AdminPage() {
       {renderEditDialog(editingBlog, setEditingBlog, [
           { key: 'title', label: 'Title' }, { key: 'content', label: 'Content', type: 'textarea' }, { key: 'thumbnailUrl', label: 'Thumbnail URL' }, { key: 'aiHint', label: 'AI Hint' }, { key: 'date', label: 'Date', type: 'date' }
       ], (e) => handleUpdate(e, updateBlog, editingBlog, setEditingBlog, fetchBlogs, 'Blog'), 'Blog Post')}
+
+      <Dialog open={!!editingContentKey} onOpenChange={(open) => !open && setEditingContentKey(null)}>
+        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit {SITE_CONTENT_SCHEMAS.find(s => s.key === editingContentKey)?.label}</DialogTitle>
+          </DialogHeader>
+          {editingContentKey && (
+            <SiteContentForm
+              fields={SITE_CONTENT_SCHEMAS.find(s => s.key === editingContentKey)!.fields}
+              initialData={siteContent[editingContentKey] || {}}
+              onSave={(data) => handleSaveSiteContent(editingContentKey, data)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

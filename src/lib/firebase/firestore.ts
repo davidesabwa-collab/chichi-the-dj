@@ -1,6 +1,6 @@
 
 import { db } from './firebase';
-import { collection, addDoc, getDocs, doc, deleteDoc, Timestamp, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, deleteDoc, Timestamp, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { Mix } from '@/types/mix';
 import { Event } from '@/types/event';
 import { Product } from '@/types/product';
@@ -102,5 +102,12 @@ const messagesCollection = collection(db, 'messages');
 export const addMessage = async (messageData: Omit<Message, 'id'>) => addDoc(messagesCollection, messageData);
 export const getMessages = async (): Promise<Message[]> => (await getDocs(messagesCollection)).docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
 export const deleteMessage = async (id: string) => deleteDoc(doc(db, 'messages', id));
+
+// --- Site Content (CMS) ---
+export const getSiteContent = async <T = any>(key: string): Promise<T | null> => {
+    const snap = await getDoc(doc(db, 'siteContent', key));
+    return snap.exists() ? (snap.data() as T) : null;
+};
+export const setSiteContent = async (key: string, data: any) => setDoc(doc(db, 'siteContent', key), data);
 
     

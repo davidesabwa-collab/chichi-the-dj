@@ -4,10 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { Mix } from '@/types/mix';
+import type { MixcloudMixItem } from '@/types/site-content';
 import { PlayCircle, Youtube, Disc, ExternalLink } from 'lucide-react';
 import { useMusicPlayer } from '@/context/music-player-context';
 
-const mixcloudMixes = [
+const defaultMixcloudMixes: MixcloudMixItem[] = [
     { title: 'Best Afrobeat Vibes - 2026', duration: '38:55', slug: 'best-afrobeat-vibes-2026' },
     { title: '2026 Soukous Party 3', duration: '1:46:12', slug: '2026-soukous-party-3' },
     { title: 'Kikuyu Ngogoyo Mix VOL1', duration: '1:50:44', slug: 'kikuyu-ngogoyo-mix-vol1' },
@@ -76,10 +77,12 @@ function MixCard({ mix }: { mix: Mix }) {
 
 interface MixesSectionProps {
     mixes: Mix[];
+    mixcloudMixes?: MixcloudMixItem[];
 }
 
-export default function MixesSection({ mixes }: MixesSectionProps) {
+export default function MixesSection({ mixes, mixcloudMixes }: MixesSectionProps) {
     const recentMixes = mixes.slice(0, 8);
+    const resolvedMixcloudMixes = mixcloudMixes?.length ? mixcloudMixes : defaultMixcloudMixes;
 
     return (
         <section id="mixes" className="py-16 sm:py-24">
@@ -125,7 +128,7 @@ export default function MixesSection({ mixes }: MixesSectionProps) {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {mixcloudMixes.map((m) => (
+                        {resolvedMixcloudMixes.map((m) => (
                             <Link
                                 key={m.slug}
                                 href={`https://www.mixcloud.com/chichithedjofficial/${m.slug}/`}

@@ -3,13 +3,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import { getSiteContent } from '@/lib/firebase/firestore';
+import type { FaqContent } from '@/types/site-content';
 
 export const metadata: Metadata = {
     title: 'FAQ',
     description: 'Frequently asked questions about Chichi The DJ services, booking, equipment, and more.',
 };
 
-const faqs = [
+const defaultCategories = [
     {
         category: 'Booking',
         items: [
@@ -88,7 +90,9 @@ const faqs = [
     },
 ];
 
-export default function FAQPage() {
+export default async function FAQPage() {
+    const content = await getSiteContent<FaqContent>('faq');
+    const faqs = content?.categories?.length ? content.categories : defaultCategories;
     return (
         <>
             <Header />

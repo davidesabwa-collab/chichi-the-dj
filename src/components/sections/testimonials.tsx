@@ -1,43 +1,47 @@
 import { Star } from 'lucide-react';
+import { getSiteContent } from '@/lib/firebase/firestore';
+import type { TestimonialsContent } from '@/types/site-content';
 
-const testimonials = [
-    {
-        quote: "He has great charisma, awesome and good variety of music. Brought great sound systems and lighting and kept the dance floor full all night long! Great vibes, energy and style!!",
-        name: "Sarah M.",
-        event: "Wedding Reception",
-        rating: 5,
-    },
-    {
-        quote: "DJ ChiChi did not disappoint. The sound was top notch and he read the crowd perfectly. Everyone had an amazing time from start to finish!",
-        name: "James K.",
-        event: "Corporate Event",
-        rating: 5,
-    },
-    {
-        quote: "Chichi made our graduation party absolutely unforgettable. He played all the right songs across every genre and kept the energy at 100 all night. Highly recommend!",
-        name: "Aisha N.",
-        event: "Graduation Party",
-        rating: 5,
-    },
-    {
-        quote: "Professional, punctual, and incredibly talented. Chichi had our whole family on the dance floor — from the kids to the grandparents. Will definitely book again!",
-        name: "David O.",
-        event: "Family Reunion",
-        rating: 5,
-    },
-    {
-        quote: "We hired Chichi for our company holiday party and it was a huge hit. He kept the vibe going for hours and took requests like a pro. Our team is still talking about it!",
-        name: "Michelle T.",
-        event: "Corporate Holiday Party",
-        rating: 5,
-    },
-    {
-        quote: "Chichi The DJ turned our wedding reception into an epic party. He knew exactly when to switch genres and kept everyone engaged all night. Worth every penny!",
-        name: "Kevin & Priya L.",
-        event: "Wedding",
-        rating: 5,
-    },
-];
+const defaultContent: TestimonialsContent = {
+    testimonials: [
+        {
+            quote: "He has great charisma, awesome and good variety of music. Brought great sound systems and lighting and kept the dance floor full all night long! Great vibes, energy and style!!",
+            name: "Sarah M.",
+            event: "Wedding Reception",
+            rating: 5,
+        },
+        {
+            quote: "DJ ChiChi did not disappoint. The sound was top notch and he read the crowd perfectly. Everyone had an amazing time from start to finish!",
+            name: "James K.",
+            event: "Corporate Event",
+            rating: 5,
+        },
+        {
+            quote: "Chichi made our graduation party absolutely unforgettable. He played all the right songs across every genre and kept the energy at 100 all night. Highly recommend!",
+            name: "Aisha N.",
+            event: "Graduation Party",
+            rating: 5,
+        },
+        {
+            quote: "Professional, punctual, and incredibly talented. Chichi had our whole family on the dance floor — from the kids to the grandparents. Will definitely book again!",
+            name: "David O.",
+            event: "Family Reunion",
+            rating: 5,
+        },
+        {
+            quote: "We hired Chichi for our company holiday party and it was a huge hit. He kept the vibe going for hours and took requests like a pro. Our team is still talking about it!",
+            name: "Michelle T.",
+            event: "Corporate Holiday Party",
+            rating: 5,
+        },
+        {
+            quote: "Chichi The DJ turned our wedding reception into an epic party. He knew exactly when to switch genres and kept everyone engaged all night. Worth every penny!",
+            name: "Kevin & Priya L.",
+            event: "Wedding",
+            rating: 5,
+        },
+    ],
+};
 
 function StarRating({ count }: { count: number }) {
     return (
@@ -49,7 +53,10 @@ function StarRating({ count }: { count: number }) {
     );
 }
 
-export default function Testimonials() {
+export default async function Testimonials() {
+    const content = (await getSiteContent<TestimonialsContent>('testimonials')) || defaultContent;
+    const testimonials = content.testimonials?.length ? content.testimonials : defaultContent.testimonials;
+
     return (
         <section id="testimonials" className="py-16 sm:py-24 bg-black text-white">
             <div className="container mx-auto px-4">

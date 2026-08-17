@@ -5,6 +5,9 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Radio, Music, Award, Users, GraduationCap, MapPin } from 'lucide-react';
+import { getSiteContent } from '@/lib/firebase/firestore';
+import { SiteIcon } from '@/lib/site-icons';
+import type { AboutPageContent } from '@/types/site-content';
 
 export const metadata: Metadata = {
     title: 'About',
@@ -17,21 +20,36 @@ export const metadata: Metadata = {
     },
 };
 
-const highlights = [
-    { icon: Award, label: '10+ Years', sub: 'of professional DJing' },
-    { icon: Users, label: '500+ Events', sub: 'hosted across the Pacific Northwest' },
-    { icon: Music, label: '50+ Genres', sub: 'from Afrobeat to Zilizopendwa' },
-    { icon: Radio, label: '3 Radio Stations', sub: 'Muuga FM · Hot 96 · Triple-A FM' },
-];
+const defaultContent: AboutPageContent = {
+    imageUrl: "https://images.unsplash.com/photo-1526979118433-63c7344f06f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
+    eyebrow: 'The DJ Behind The Beat',
+    paragraph1: "A good DJ is the key to your event's success. Chichi The DJ is a professional, experienced, and disciplined DJ who takes all events with the seriousness they deserve to make each of them successful.",
+    paragraph2: "With vast experience in event organizing, the hospitality industry, quality sound systems, and a deep familiarity with music across 50+ genres and multiple languages, Chichi The DJ is your best choice for any event — from intimate private gatherings to large corporate celebrations.",
+    paragraph3: "Chichi is also a recent graduate with an Associate Degree in Business Management & Cybersecurity, bringing a sharp, professional mindset to every booking.",
+    radioCredits: ['Muuga FM', 'Hot 96', 'Triple-A FM'],
+    highlights: [
+        { icon: 'Award', label: '10+ Years', sub: 'of professional DJing' },
+        { icon: 'Users', label: '500+ Events', sub: 'hosted across the Pacific Northwest' },
+        { icon: 'Music', label: '50+ Genres', sub: 'from Afrobeat to Zilizopendwa' },
+        { icon: 'Radio', label: '3 Radio Stations', sub: 'Muuga FM · Hot 96 · Triple-A FM' },
+    ],
+    genres: [
+        'Afrobeat', 'Amapiano', 'Reggae', 'Dancehall', 'Hip Hop', 'R&B',
+        'Kikuyu / Mugithi', 'Ohangla / Benga', 'Soukous / Ndombolo', 'Gospel',
+        'Latin', 'Pop', 'Soul', 'Classic Rock', '70s–90s Classics', 'Bongo Flava',
+        'Kalenjin', 'Ugandan', 'Swahili', 'Arbantone',
+    ],
+    educationText: 'Associate Degree in Business Management & Cybersecurity — bringing a disciplined, professional mindset to every event.',
+    radioExperienceText: 'Featured on Muuga FM, Hot 96, and Triple-A FM — bringing broadcast-level curation and energy to live events.',
+    eventExperienceText: '500+ events including weddings, corporate functions, cultural days, graduation parties, private parties, and club nights across the Pacific Northwest.',
+};
 
-const genres = [
-    'Afrobeat', 'Amapiano', 'Reggae', 'Dancehall', 'Hip Hop', 'R&B',
-    'Kikuyu / Mugithi', 'Ohangla / Benga', 'Soukous / Ndombolo', 'Gospel',
-    'Latin', 'Pop', 'Soul', 'Classic Rock', '70s–90s Classics', 'Bongo Flava',
-    'Kalenjin', 'Ugandan', 'Swahili', 'Arbantone',
-];
+export default async function AboutPage() {
+    const content = (await getSiteContent<AboutPageContent>('about-page')) || defaultContent;
+    const highlights = content.highlights?.length ? content.highlights : defaultContent.highlights;
+    const genres = content.genres?.length ? content.genres : defaultContent.genres;
+    const radioCredits = content.radioCredits?.length ? content.radioCredits : defaultContent.radioCredits;
 
-export default function AboutPage() {
     return (
         <>
             <Header />
@@ -42,7 +60,7 @@ export default function AboutPage() {
                         <div className="grid md:grid-cols-2 gap-16 items-center">
                             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
                                 <Image
-                                    src="https://images.unsplash.com/photo-1526979118433-63c7344f06f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                                    src={content.imageUrl || defaultContent.imageUrl}
                                     alt="Chichi The DJ performing"
                                     fill
                                     className="object-cover"
@@ -57,19 +75,19 @@ export default function AboutPage() {
                                 </div>
                             </div>
                             <div>
-                                <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-3">The DJ Behind The Beat</p>
+                                <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-3">{content.eyebrow || defaultContent.eyebrow}</p>
                                 <h1 className="text-5xl md:text-6xl font-extrabold uppercase tracking-wider mb-6">About Chichi The DJ</h1>
                                 <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                                    A good DJ is the key to your event's success. Chichi The DJ is a professional, experienced, and disciplined DJ who takes all events with the seriousness they deserve to make each of them successful.
+                                    {content.paragraph1 || defaultContent.paragraph1}
                                 </p>
                                 <p className="text-gray-400 leading-relaxed mb-6">
-                                    With vast experience in event organizing, the hospitality industry, quality sound systems, and a deep familiarity with music across 50+ genres and multiple languages, Chichi The DJ is your best choice for any event — from intimate private gatherings to large corporate celebrations.
+                                    {content.paragraph2 || defaultContent.paragraph2}
                                 </p>
                                 <p className="text-gray-400 leading-relaxed mb-8">
-                                    Chichi is also a recent graduate with an Associate Degree in Business Management & Cybersecurity, bringing a sharp, professional mindset to every booking.
+                                    {content.paragraph3 || defaultContent.paragraph3}
                                 </p>
                                 <div className="flex flex-wrap gap-3 mb-8">
-                                    {['Muuga FM', 'Hot 96', 'Triple-A FM'].map((s) => (
+                                    {radioCredits.map((s) => (
                                         <span key={s} className="flex items-center gap-1.5 text-xs border border-primary/40 text-primary px-3 py-1.5 rounded-full">
                                             <Radio className="h-3 w-3" /> {s}
                                         </span>
@@ -90,7 +108,7 @@ export default function AboutPage() {
                             {highlights.map((h) => (
                                 <div key={h.label}>
                                     <div className="flex justify-center mb-2">
-                                        <h.icon className="h-8 w-8 text-black/70" />
+                                        <SiteIcon name={h.icon} className="h-8 w-8 text-black/70" />
                                     </div>
                                     <p className="text-3xl font-extrabold text-black">{h.label}</p>
                                     <p className="text-xs font-semibold text-black/60 uppercase tracking-wider mt-1">{h.sub}</p>
@@ -128,21 +146,21 @@ export default function AboutPage() {
                                 <GraduationCap className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
                                 <div>
                                     <h3 className="font-bold text-white text-lg mb-1">Education</h3>
-                                    <p className="text-gray-400">Associate Degree in Business Management & Cybersecurity — bringing a disciplined, professional mindset to every event.</p>
+                                    <p className="text-gray-400">{content.educationText || defaultContent.educationText}</p>
                                 </div>
                             </div>
                             <div className="flex gap-4 items-start bg-gray-900 border border-gray-800 rounded-lg p-6">
                                 <Radio className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
                                 <div>
                                     <h3 className="font-bold text-white text-lg mb-1">Radio Experience</h3>
-                                    <p className="text-gray-400">Featured on Muuga FM, Hot 96, and Triple-A FM — bringing broadcast-level curation and energy to live events.</p>
+                                    <p className="text-gray-400">{content.radioExperienceText || defaultContent.radioExperienceText}</p>
                                 </div>
                             </div>
                             <div className="flex gap-4 items-start bg-gray-900 border border-gray-800 rounded-lg p-6">
                                 <Users className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
                                 <div>
                                     <h3 className="font-bold text-white text-lg mb-1">Event Experience</h3>
-                                    <p className="text-gray-400">500+ events including weddings, corporate functions, cultural days, graduation parties, private parties, and club nights across the Pacific Northwest.</p>
+                                    <p className="text-gray-400">{content.eventExperienceText || defaultContent.eventExperienceText}</p>
                                 </div>
                             </div>
                         </div>

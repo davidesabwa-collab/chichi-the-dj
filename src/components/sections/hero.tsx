@@ -1,32 +1,32 @@
-'use client'
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import Autoplay from "embla-carousel-autoplay"
+import { getSiteContent } from '@/lib/firebase/firestore';
+import type { HeroContent } from '@/types/site-content';
+import HeroCarousel from './hero-carousel';
 
-const carouselImages = [
-  { src: "https://images.unsplash.com/photo-1544785349-c4a5301826fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8ZGp8ZW58MHx8fHwxNzU0NjUyOTM2fDA&ixlib=rb-4.1.0&q=80&w=1080", alt: "DJ performing", aiHint: "dj performing" },
-  { src: "https://images.unsplash.com/photo-1651065699236-6a6885503943?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Arap Trap Art", aiHint: "concert crowd" },
-  { src: "https://images.unsplash.com/photo-1618409698966-6caa2b95733a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Graffiti background", aiHint: "graffiti art" },
-];
+const defaultContent: HeroContent = {
+    headline: 'Experience The Beat',
+    subtext: "No ads, no noise, just Chichi The DJ’s best mixes, exclusive tracks, playlists, and more, all in one smooth spot.",
+    images: [
+        { src: "https://images.unsplash.com/photo-1544785349-c4a5301826fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8ZGp8ZW58MHx8fHwxNzU0NjUyOTM2fDA&ixlib=rb-4.1.0&q=80&w=1080", alt: "DJ performing", aiHint: "dj performing" },
+        { src: "https://images.unsplash.com/photo-1651065699236-6a6885503943?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Arap Trap Art", aiHint: "concert crowd" },
+        { src: "https://images.unsplash.com/photo-1618409698966-6caa2b95733a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkanxlbnwwfHx8fDE3NTQ2NTI5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080", alt: "Graffiti background", aiHint: "graffiti art" },
+    ],
+};
 
-export default function Hero() {
+export default async function Hero() {
+    const content = (await getSiteContent<HeroContent>('hero')) || defaultContent;
+    const images = content.images?.length ? content.images : defaultContent.images;
+
   return (
     <section id="home" className="w-full text-center text-white pt-20">
       <div className="container mx-auto px-4 py-10 sm:py-20">
         <div className="flex flex-col items-center">
             <h1 className="text-4xl md:text-6xl font-extrabold text-gray-100">
-                Experience The Beat
+                {content.headline || defaultContent.headline}
             </h1>
             <p className="mt-4 text-lg max-w-2xl text-gray-300">
-                No ads, no noise, just Chichi The DJ’s best mixes, exclusive tracks, playlists, and more, all in one smooth spot.
+                {content.subtext || defaultContent.subtext}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <Button size="lg" className="bg-white text-black hover:bg-gray-200" asChild>
@@ -38,35 +38,8 @@ export default function Hero() {
             </div>
         </div>
       </div>
-      
-      <div className="w-full mt-5">
-         <Carousel 
-            opts={{
-                loop: true,
-            }}
-            plugins={[
-                Autoplay({
-                  delay: 5000,
-                }),
-              ]}
-            >
-            <CarouselContent>
-                {carouselImages.map((image, index) => (
-                    <CarouselItem key={index}>
-                         <Image
-                            src={image.src}
-                            alt={image.alt}
-                            width={1920}
-                            height={720}
-                            className="object-cover w-full h-auto"
-                            priority={index === 0}
-                            data-ai-hint={image.aiHint}
-                        />
-                    </CarouselItem>
-                ))}
-            </CarouselContent>
-        </Carousel>
-      </div>
+
+      <HeroCarousel images={images} />
     </section>
   );
 }

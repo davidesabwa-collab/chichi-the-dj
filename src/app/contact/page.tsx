@@ -2,10 +2,22 @@ import type { Metadata } from 'next';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { BookingForm } from '@/components/booking-form';
-import { getEvents } from '@/lib/firebase/firestore';
+import { getEvents, getSiteContent } from '@/lib/firebase/firestore';
 import { Mail, Phone, MapPin, MessageCircle, Info, Clock, ShoppingBag, IdCard } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { ContactInfoContent } from '@/types/site-content';
+
+const defaultContact: ContactInfoContent = {
+    address: 'Seattle, WA',
+    phone: '+1 (360) 995-3309',
+    emails: ['actualizeevents@gmail.com', 'hi@chichithedj.us'],
+    whatsappNumber: 'https://wa.me/13609953309',
+    whatsappCatalogUrl: 'https://wa.me/c/13609953309',
+    digitalCardUrl: 'https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614',
+    digitalCardQrUrl: '/chichi-contact-qr.jpg',
+    bookingPolicyText: 'Reservations are first come, first served upon making a down payment. Your date is not secured until a deposit is received.',
+};
 
 export const metadata: Metadata = {
     title: 'Contact & Booking',
@@ -18,33 +30,38 @@ export const metadata: Metadata = {
     },
 };
 
-const contactDetails = [
-    {
-        icon: MapPin,
-        label: 'Location',
-        lines: ['Seattle, WA', 'Available throughout the Pacific Northwest'],
-    },
-    {
-        icon: Phone,
-        label: 'Phone',
-        lines: ['+1 (360) 995-3309'],
-        href: 'tel:+13609953309',
-    },
-    {
-        icon: Mail,
-        label: 'Email',
-        lines: ['actualizeevents@gmail.com', 'hi@chichithedj.us'],
-        href: 'mailto:actualizeevents@gmail.com',
-    },
-    {
-        icon: Clock,
-        label: 'Response Time',
-        lines: ['Usually within 24 hours', 'Mon – Sat, 9am – 8pm PT'],
-    },
-];
-
 export default async function ContactPage() {
-    const events = await getEvents();
+    const [events, contact] = await Promise.all([
+        getEvents(),
+        getSiteContent<ContactInfoContent>('contact-info'),
+    ]);
+    const info = contact || defaultContact;
+    const emails = info.emails?.length ? info.emails : defaultContact.emails;
+
+    const contactDetails = [
+        {
+            icon: MapPin,
+            label: 'Location',
+            lines: [info.address || defaultContact.address, 'Available throughout the Pacific Northwest'],
+        },
+        {
+            icon: Phone,
+            label: 'Phone',
+            lines: [info.phone || defaultContact.phone],
+            href: `tel:+${(info.phone || defaultContact.phone).replace(/\D/g, '')}`,
+        },
+        {
+            icon: Mail,
+            label: 'Email',
+            lines: emails,
+            href: `mailto:${emails[0]}`,
+        },
+        {
+            icon: Clock,
+            label: 'Response Time',
+            lines: ['Usually within 24 hours', 'Mon – Sat, 9am – 8pm PT'],
+        },
+    ];
 
     return (
         <>
@@ -95,7 +112,7 @@ export default async function ContactPage() {
                                         <p className="text-white font-semibold text-sm uppercase tracking-wider mb-2">WhatsApp</p>
                                         <div className="flex flex-wrap gap-2">
                                             <Link
-                                                href="https://wa.me/13609953309"
+                                                href={info.whatsappNumber || defaultContact.whatsappNumber}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-600 text-white text-sm font-semibold hover:bg-green-500 transition-colors"
@@ -104,7 +121,7 @@ export default async function ContactPage() {
                                                 Chat on WhatsApp
                                             </Link>
                                             <Link
-                                                href="https://wa.me/c/13609953309"
+                                                href={info.whatsappCatalogUrl || defaultContact.whatsappCatalogUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-700/80 text-white text-sm font-semibold hover:bg-green-600 transition-colors"
@@ -125,7 +142,7 @@ export default async function ContactPage() {
                                         <div>
                                             <p className="text-white font-semibold text-sm uppercase tracking-wider mb-2">Digital Contact Card</p>
                                             <Link
-                                                href="https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614"
+                                                href={info.digitalCardUrl || defaultContact.digitalCardUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors"
@@ -135,13 +152,13 @@ export default async function ContactPage() {
                                             </Link>
                                         </div>
                                         <a
-                                            href="https://hihello.com/p/8c4fc279-227c-43b6-a2d4-919b387b0614"
+                                            href={info.digitalCardUrl || defaultContact.digitalCardUrl}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex-shrink-0"
                                         >
                                             <Image
-                                                src="/chichi-contact-qr.jpg"
+                                                src={info.digitalCardQrUrl || defaultContact.digitalCardQrUrl}
                                                 alt="Scan to save Chichi The DJ's contact information"
                                                 width={88}
                                                 height={88}
@@ -156,7 +173,7 @@ export default async function ContactPage() {
                                     <Info className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                                     <p className="text-sm text-gray-400">
                                         <span className="text-white font-semibold">Booking Policy: </span>
-                                        Reservations are first come, first served upon making a down payment. Dates are not secured without a deposit.
+                                        {info.bookingPolicyText || defaultContact.bookingPolicyText}
                                     </p>
                                 </div>
 

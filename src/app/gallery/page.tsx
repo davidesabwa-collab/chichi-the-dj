@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
+import { getSiteContent } from '@/lib/firebase/firestore';
+import type { GalleryPageContent } from '@/types/site-content';
 
 export const metadata: Metadata = {
     title: 'Gallery',
@@ -16,22 +18,26 @@ export const metadata: Metadata = {
     },
 };
 
-const galleryImages = [
-    { src: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Live concert crowd energy', category: 'Concerts', aiHint: 'concert crowd' },
-    { src: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'DJ performing on stage', category: 'Live Sets', aiHint: 'dj on stage' },
-    { src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Wedding reception celebration', category: 'Weddings', aiHint: 'wedding reception' },
-    { src: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'DJ booth and equipment', category: 'Setup', aiHint: 'dj equipment' },
-    { src: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Dance floor under colorful lights', category: 'Dance Floor', aiHint: 'dance floor lights' },
-    { src: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Corporate event setup', category: 'Corporate', aiHint: 'corporate event' },
-    { src: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Outdoor festival crowd', category: 'Festivals', aiHint: 'outdoor festival' },
-    { src: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Party lights and atmosphere', category: 'Atmosphere', aiHint: 'party lights' },
-    { src: 'https://images.unsplash.com/photo-1599943821034-8cb5c7526922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Graduation party celebration', category: 'Graduations', aiHint: 'graduation celebration' },
-    { src: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Elegant event celebration', category: 'Private Events', aiHint: 'elegant party' },
-    { src: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Teen party energy', category: 'Teen Events', aiHint: 'teen party energy' },
-    { src: 'https://images.unsplash.com/photo-1529543544282-ea669407fca3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Family gathering celebration', category: 'Family Events', aiHint: 'family gathering' },
-];
+const defaultContent: GalleryPageContent = {
+    images: [
+        { src: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Live concert crowd energy', category: 'Concerts', aiHint: 'concert crowd' },
+        { src: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'DJ performing on stage', category: 'Live Sets', aiHint: 'dj on stage' },
+        { src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Wedding reception celebration', category: 'Weddings', aiHint: 'wedding reception' },
+        { src: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'DJ booth and equipment', category: 'Setup', aiHint: 'dj equipment' },
+        { src: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Dance floor under colorful lights', category: 'Dance Floor', aiHint: 'dance floor lights' },
+        { src: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Corporate event setup', category: 'Corporate', aiHint: 'corporate event' },
+        { src: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Outdoor festival crowd', category: 'Festivals', aiHint: 'outdoor festival' },
+        { src: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Party lights and atmosphere', category: 'Atmosphere', aiHint: 'party lights' },
+        { src: 'https://images.unsplash.com/photo-1599943821034-8cb5c7526922?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Graduation party celebration', category: 'Graduations', aiHint: 'graduation celebration' },
+        { src: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Elegant event celebration', category: 'Private Events', aiHint: 'elegant party' },
+        { src: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Teen party energy', category: 'Teen Events', aiHint: 'teen party energy' },
+        { src: 'https://images.unsplash.com/photo-1529543544282-ea669407fca3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800', alt: 'Family gathering celebration', category: 'Family Events', aiHint: 'family gathering' },
+    ],
+};
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+    const content = (await getSiteContent<GalleryPageContent>('gallery-page')) || defaultContent;
+    const galleryImages = content.images?.length ? content.images : defaultContent.images;
     return (
         <>
             <Header />
